@@ -1,0 +1,3260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>档案解密 · 英式英语与美式英语的百年纠葛</title>
+    <!-- 字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Special+Elite&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js">
+    </script>
+    <style>
+        /* ============================================================
+           全局变量（封面与内容共用）
+           ============================================================ */
+        :root {
+            --paper: #F4EFE6;
+            --paper-dark: #E8E0D3;
+            --paper-darker: #D5CCBB;
+            --ink: #1a1612;
+            --ink-light: #3d362e;
+            --ink-muted: #6b5f52;
+            --ink-faint: #9a8e7e;
+            --rust: #8B3A3A;
+            --rust-deep: #5C1E1E;
+            --rust-bright: #A0524F;
+            --rust-gold: #B8534F;
+            --seal-red: #7A2A2A;
+            --seal-red-light: #A04040;
+            --seal-highlight: #C86050;
+            --tape: #C4B69C;
+            --tape-dark: #A89878;
+            --tape-light: #D9CEBA;
+            --british-blue: #2B4070;
+            --british-red: #8B3030;
+            --american-blue: #3A5070;
+            --american-red: #9B3A3A;
+            --gold-accent: #B8A070;
+            --divider: #C4B9A6;
+            --archive-blue: #3A5A7C;
+            --archive-blue-light: #5A7A9C;
+            --stamp-red: #B33A3A;
+            --stamp-red-faded: rgba(179, 58, 58, 0.55);
+            --shadow-seal: 0 6px 30px rgba(90, 30, 30, 0.45);
+            --shadow-seal-hover: 0 10px 45px rgba(110, 35, 35, 0.6);
+            --shadow-card: 0 4px 40px rgba(26, 22, 18, 0.15);
+            --shadow-soft: 0 2px 20px rgba(26, 22, 18, 0.08);
+            --shadow-medium: 0 4px 30px rgba(26, 22, 18, 0.13);
+            --shadow-deep: 0 8px 50px rgba(26, 22, 18, 0.18);
+            --transition-ease: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-bounce: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition-slow: 1s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-medium: 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* ============================================================
+           全局重置 & 基础
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        /* ============================================================
+           封面层样式 (#coverLayer)
+           ============================================================ */
+        #coverLayer {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: #2a241c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Libre Baskerville', 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+            transition: opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        #coverLayer.fade-out {
+            opacity: 0;
+            transform: scale(1.04);
+            pointer-events: none;
+        }
+        #coverLayer::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, #3d362e 0%, #1a1612 70%, #0d0a08 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cover-wrapper {
+            position: relative;
+            z-index: 1;
+            width: min(92vw, 1100px);
+            height: min(88vh, 750px);
+            perspective: 1400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover-dossier {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--paper);
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-slow);
+        }
+        .cover-dossier::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.045;
+            background-image: url("data:image/svg+xml,%3Csvg width='500' height='500' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+            background-size: 350px 350px;
+        }
+        .cover-dossier::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 4px;
+            box-shadow: inset 0 0 0 2px rgba(180, 165, 140, 0.3), inset 0 0 0 4px rgba(200, 185, 160, 0.12);
+        }
+
+        /* 水印 */
+        .watermark-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            display: flex;
+            flex-direction: row;
+        }
+        .watermark-half {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .watermark-half.british {
+            background: radial-gradient(ellipse at 70% 50%, rgba(43, 64, 112, 0.04) 0%, transparent 70%);
+        }
+        .watermark-half.american {
+            background: radial-gradient(ellipse at 30% 50%, rgba(155, 58, 58, 0.04) 0%, transparent 70%);
+        }
+        .watermark-svg {
+            position: absolute;
+            opacity: 0.07;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+        .watermark-half.british .watermark-svg {
+            right: 8%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 55%;
+            max-width: 280px;
+        }
+        .watermark-half.american .watermark-svg {
+            left: 8%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 55%;
+            max-width: 280px;
+        }
+        .word-watermark {
+            position: absolute;
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            opacity: 0.06;
+            pointer-events: none;
+            color: var(--ink);
+            white-space: nowrap;
+            transition: opacity 0.8s ease;
+        }
+        .british .word-watermark {
+            right: 15%;
+        }
+        .american .word-watermark {
+            left: 15%;
+        }
+
+        /* X形封条 */
+        .seal-tapes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .seal-tape {
+            position: absolute;
+            background: linear-gradient(180deg, var(--tape-light) 0%, var(--tape) 15%, var(--tape-dark) 30%, var(--tape) 50%, var(--tape-dark) 70%, var(--tape) 85%, var(--tape-light) 100%);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            transition: all var(--transition-slow);
+        }
+        .seal-tape.tape-one {
+            top: -5%;
+            left: 8%;
+            width: 38px;
+            height: 115%;
+            transform: rotate(28deg);
+            transform-origin: center center;
+        }
+        .seal-tape.tape-two {
+            top: -5%;
+            right: 8%;
+            width: 38px;
+            height: 115%;
+            transform: rotate(-28deg);
+            transform-origin: center center;
+        }
+        .seal-tape::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 0;
+            bottom: 0;
+            border-left: 1px dashed rgba(0, 0, 0, 0.1);
+            border-right: 1px dashed rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+        }
+        .seal-tape::after {
+            content: '';
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            top: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(0, 0, 0, 0.04) 18px, rgba(0, 0, 0, 0.04) 19px);
+            pointer-events: none;
+        }
+        .tape-text {
+            position: absolute;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.5rem;
+            letter-spacing: 0.35em;
+            color: rgba(90, 50, 50, 0.45);
+            pointer-events: none;
+            z-index: 4;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+        .tape-text.top-left {
+            top: 15%;
+            left: 6%;
+            transform: rotate(-90deg);
+        }
+        .tape-text.bottom-right {
+            bottom: 14%;
+            right: 5%;
+            transform: rotate(90deg);
+        }
+        .tape-text.top-right {
+            top: 16%;
+            right: 6%;
+            transform: rotate(-90deg);
+        }
+        .tape-text.bottom-left {
+            bottom: 13%;
+            left: 5%;
+            transform: rotate(90deg);
+        }
+
+        /* 标题层 */
+        .title-layer {
+            position: absolute;
+            z-index: 5;
+            pointer-events: none;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+        .title-top-label {
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+        .title-main {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.05em;
+            line-height: 1.25;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        .title-main .italic-highlight {
+            font-style: italic;
+            color: var(--rust);
+            font-weight: 400;
+        }
+        .title-sub {
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--ink-light);
+            letter-spacing: 0.06em;
+            opacity: 0.75;
+            margin-top: 2px;
+        }
+        .title-dateline {
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            color: var(--ink-muted);
+            opacity: 0.6;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        /* 蜡封 */
+        .wax-seal-container {
+            position: absolute;
+            z-index: 10;
+            pointer-events: all;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: transform var(--transition-bounce);
+        }
+        .wax-seal-container:hover {
+            transform: translateX(-50%) scale(1.04);
+        }
+        .wax-seal-container:active {
+            transform: translateX(-50%) scale(0.96);
+        }
+        .wax-seal {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at 40% 35%, var(--seal-highlight) 0%, #B84040 8%, var(--seal-red) 22%, #6B2020 55%, #4A1515 80%, #3A1010 100%);
+            box-shadow: var(--shadow-seal), 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 200, 180, 0.2), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-ease);
+            animation: seal-breathe 3.5s ease-in-out infinite;
+        }
+        @keyframes seal-breathe {
+            0%,
+            100% {
+                box-shadow: var(--shadow-seal), 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 200, 180, 0.2), inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                box-shadow: var(--shadow-seal-hover), 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 3px 6px rgba(255, 210, 190, 0.28), inset 0 -4px 8px rgba(0, 0, 0, 0.35);
+            }
+        }
+        .wax-seal::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            background: transparent;
+            box-shadow: 0 -5px 0 3px #7A2A2A, 5px -3px 0 2px #6B2020, -5px -3px 0 2px #823030, 8px 3px 0 2px #6B2020, -8px 3px 0 2px #702525, 3px 8px 0 2px #752828, -3px 8px 0 3px #6E2323, -6px -7px 0 1px #7E2E2E, 6px 7px 0 1px #682020;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.75;
+            filter: blur(0.5px);
+        }
+        .wax-seal::after {
+            content: '';
+            position: absolute;
+            top: 16%;
+            left: 22%;
+            width: 32%;
+            height: 22%;
+            border-radius: 50%;
+            background: rgba(255, 220, 200, 0.25);
+            filter: blur(8px);
+            pointer-events: none;
+            transform: rotate(-15deg);
+        }
+        .seal-emblem {
+            position: relative;
+            z-index: 2;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .seal-emblem svg {
+            width: 100%;
+            height: 100%;
+            opacity: 0.7;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+        }
+        .wax-drips {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: -1;
+            display: flex;
+            gap: 4px;
+            margin-top: -6px;
+        }
+        .wax-drip {
+            width: 12px;
+            height: 22px;
+            border-radius: 50% 50% 30% 30%;
+            background: linear-gradient(180deg, #7A2A2A 0%, #5A1818 100%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            opacity: 0.8;
+        }
+        .wax-drip:nth-child(2) {
+            height: 16px;
+            width: 9px;
+            margin-top: 2px;
+            border-radius: 40% 40% 35% 35%;
+        }
+        .wax-drip:nth-child(3) {
+            height: 19px;
+            width: 10px;
+            border-radius: 45% 45% 30% 30%;
+        }
+
+        /* 探索提示 - 新设计：菱形符号 */
+        .explore-hint {
+            position: absolute;
+            z-index: 12;
+            pointer-events: none;
+            bottom: 9%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            opacity: 0.7;
+        }
+        .explore-hint .hint-symbol {
+            color: var(--rust);
+            font-size: 1.2rem;
+            animation: hint-float 2.5s ease-in-out infinite;
+            line-height: 1;
+        }
+        @keyframes hint-float {
+            0%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.65;
+            }
+            50% {
+                transform: translateY(-8px);
+                opacity: 0.9;
+            }
+        }
+        .explore-hint .hint-text {
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            text-align: center;
+        }
+
+        /* 四角标签 */
+        .corner-tag {
+            position: absolute;
+            z-index: 4;
+            pointer-events: none;
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 0.5rem;
+            letter-spacing: 0.2em;
+            color: var(--ink-faint);
+            text-transform: uppercase;
+            opacity: 0.5;
+        }
+        .corner-tag.top-left-tag {
+            top: 16px;
+            left: 20px;
+        }
+        .corner-tag.top-right-tag {
+            top: 16px;
+            right: 20px;
+        }
+        .corner-tag.bottom-left-tag {
+            bottom: 16px;
+            left: 20px;
+        }
+        .corner-tag.bottom-right-tag {
+            bottom: 16px;
+            right: 20px;
+        }
+
+        /* 开封动画 */
+        .cover-dossier.unsealing .seal-tape {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .cover-dossier.unsealing .seal-tape.tape-one {
+            transform: rotate(28deg) translateX(80px);
+            opacity: 0;
+            transition: all 0.5s ease-in;
+        }
+        .cover-dossier.unsealing .seal-tape.tape-two {
+            transform: rotate(-28deg) translateX(-80px);
+            opacity: 0;
+            transition: all 0.5s ease-in;
+        }
+        .cover-dossier.unsealing .wax-seal-container {
+            animation: seal-shatter 0.7s ease-in forwards;
+            pointer-events: none;
+        }
+        @keyframes seal-shatter {
+            0% {
+                transform: translateX(-50%) scale(1);
+                opacity: 1;
+                filter: brightness(1);
+            }
+            30% {
+                transform: translateX(-50%) scale(1.15);
+                opacity: 0.9;
+                filter: brightness(1.3);
+            }
+            100% {
+                transform: translateX(-50%) scale(0.3);
+                opacity: 0;
+                filter: brightness(2) blur(6px);
+            }
+        }
+        .seal-fragment {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--seal-red);
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+        .unseal-flash {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 15;
+            background: radial-gradient(circle at center, rgba(255, 240, 220, 0.7) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .unseal-flash.active {
+            opacity: 1;
+            transition: opacity 0.15s ease;
+        }
+        .revealed-text {
+            position: absolute;
+            z-index: 16;
+            pointer-events: none;
+            text-align: center;
+            opacity: 0;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateY(20px);
+            transition: all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        .revealed-text.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) translateY(0);
+        }
+        .revealed-text .revealed-title {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.04em;
+        }
+        .revealed-text .revealed-sub {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+        .revealed-text .revealed-link {
+            display: inline-block;
+            margin-top: 18px;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: var(--rust);
+            text-decoration: none;
+            border: 1px solid var(--rust);
+            padding: 10px 24px;
+            border-radius: 2px;
+            pointer-events: all;
+            cursor: pointer;
+            transition: all var(--transition-ease);
+            background: rgba(139, 58, 58, 0.04);
+        }
+        .revealed-text .revealed-link:hover {
+            background: rgba(139, 58, 58, 0.12);
+            border-color: var(--rust-bright);
+            color: var(--rust-bright);
+            letter-spacing: 0.28em;
+        }
+
+        /* 封面响应式 */
+        @media (max-width:768px) {
+            .cover-wrapper {
+                width: 94vw;
+                height: 80vh;
+            }
+            .title-layer {
+                top: 26%;
+            }
+            .title-main {
+                font-size: 1.3rem;
+            }
+            .title-sub {
+                font-size: 0.75rem;
+            }
+            .title-top-label {
+                font-size: 0.5rem;
+            }
+            .title-dateline {
+                font-size: 0.45rem;
+            }
+            .wax-seal-container {
+                bottom: 16%;
+            }
+            .wax-seal {
+                width: 90px;
+                height: 90px;
+            }
+            .wax-seal::before {
+                inset: -5px;
+            }
+            .wax-drip {
+                width: 8px;
+                height: 15px;
+            }
+            .wax-drip:nth-child(2) {
+                height: 11px;
+                width: 6px;
+            }
+            .wax-drip:nth-child(3) {
+                height: 13px;
+                width: 7px;
+            }
+            .seal-emblem {
+                width: 40px;
+                height: 40px;
+            }
+            .seal-tape {
+                width: 24px !important;
+            }
+            .explore-hint {
+                bottom: 6%;
+            }
+            .explore-hint .hint-text {
+                font-size: 0.5rem;
+            }
+            .corner-tag {
+                font-size: 0.4rem;
+            }
+            .watermark-half.british .watermark-svg,
+            .watermark-half.american .watermark-svg {
+                width: 70%;
+                max-width: 160px;
+            }
+            .word-watermark {
+                font-size: 0.45rem;
+            }
+            .revealed-text {
+                top: 50%;
+            }
+            .revealed-text .revealed-title {
+                font-size: 1.1rem;
+            }
+            .revealed-text .revealed-link {
+                font-size: 0.55rem;
+                padding: 8px 16px;
+            }
+            .tape-text {
+                font-size: 0.4rem;
+            }
+        }
+        @media (max-width:480px) {
+            .cover-wrapper {
+                width: 96vw;
+                height: 75vh;
+            }
+            .title-layer {
+                top: 22%;
+            }
+            .title-main {
+                font-size: 1rem;
+            }
+            .title-sub {
+                font-size: 0.65rem;
+            }
+            .wax-seal-container {
+                bottom: 12%;
+            }
+            .wax-seal {
+                width: 70px;
+                height: 70px;
+            }
+            .wax-seal::before {
+                inset: -4px;
+            }
+            .seal-emblem {
+                width: 30px;
+                height: 30px;
+            }
+            .seal-tape {
+                width: 18px !important;
+            }
+            .wax-drips {
+                gap: 2px;
+            }
+            .wax-drip {
+                width: 6px;
+                height: 11px;
+            }
+            .wax-drip:nth-child(2) {
+                height: 8px;
+                width: 5px;
+            }
+            .wax-drip:nth-child(3) {
+                height: 10px;
+                width: 5px;
+            }
+            .explore-hint {
+                bottom: 4%;
+            }
+            .watermark-half.british .watermark-svg,
+            .watermark-half.american .watermark-svg {
+                width: 80%;
+                max-width: 120px;
+                opacity: 0.04;
+            }
+            .revealed-text {
+                top: 48%;
+            }
+            .revealed-text .revealed-title {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* ============================================================
+           内容层样式 (#contentLayer)
+           ============================================================ */
+        #contentLayer {
+            display: none;
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: 'Libre Baskerville', 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            position: relative;
+            cursor: default;
+            min-height: 100vh;
+        }
+        #contentLayer.active {
+            display: block;
+        }
+
+        #contentLayer::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+            background-size: 300px 300px;
+        }
+
+        /* 内容层 - 墨迹 */
+        #contentLayer .ink-blot {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, rgba(26, 22, 18, 0.06) 0%, rgba(26, 22, 18, 0.02) 40%, transparent 70%);
+            filter: blur(1px);
+        }
+
+        /* 主容器 */
+        #contentLayer .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 导航 - 档案标签风格（已优化，整体比例放大，更新链路） */
+        #contentLayer .archive-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: linear-gradient(180deg, rgba(247, 243, 235, 0.97) 0%, rgba(247, 243, 235, 0.88) 85%, rgba(247, 243, 235, 0) 100%);
+            padding: 24px 40px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all var(--transition-medium);
+        }
+        #contentLayer .archive-nav.scrolled {
+            background: rgba(247, 243, 235, 0.95);
+            box-shadow: 0 1px 0 var(--divider);
+            padding: 18px 40px 22px;
+        }
+        #contentLayer .nav-tag {
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            background: var(--paper-dark);
+            border: 1px solid var(--divider);
+            padding: 8px 18px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #contentLayer .nav-tag .tag-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--rust);
+        }
+        #contentLayer .nav-links {
+            display: flex;
+            gap: 36px;
+            list-style: none;
+            font-family: 'Special Elite', 'Courier New', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        #contentLayer .nav-links a {
+            color: var(--ink-light);
+            text-decoration: none;
+            transition: color var(--transition-medium);
+            position: relative;
+            padding-bottom: 4px;
+        }
+        #contentLayer .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--rust);
+            transition: width var(--transition-medium);
+        }
+        #contentLayer .nav-links a:hover {
+            color: var(--rust);
+        }
+        #contentLayer .nav-links a:hover::after {
+            width: 100%;
+        }
+        #contentLayer .nav-links a.active {
+            color: var(--rust);
+        }
+        #contentLayer .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* 部分分隔符 */
+        #contentLayer .section-divider {
+            width: 100%;
+            height: 1px;
+            background: var(--divider);
+            margin: 20px 0 40px;
+            position: relative;
+            opacity: 0.6;
+        }
+        #contentLayer .section-divider::after {
+            content: '§';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--paper);
+            padding: 0 16px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--ink-muted);
+        }
+
+        /* 板块通用样式 */
+        #contentLayer .section-block {
+            padding: 80px 0 100px;
+            position: relative;
+        }
+        #contentLayer .section-block#part-one,
+        #contentLayer .section-block#part-intro {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: calc(100vh - 60px);
+            padding: 80px 0 80px;
+        }
+        #contentLayer .section-block .block-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        #contentLayer .section-block .block-header h2 {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.03em;
+            line-height: 1.3;
+            margin-bottom: 0.2em;
+        }
+        #contentLayer .section-block .block-header .subtitle {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            margin-top: 4px; 
+        }
+        #contentLayer .section-block .block-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 图表容器 */
+        #contentLayer .chart-container {
+            background: var(--paper);
+            border: 2px solid var(--divider);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+        }
+        #contentLayer .chart-container .chart-title {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        #contentLayer .chart-container .chart-box {
+            width: 100%;
+            height: 400px;
+        }
+
+        /* 堆叠面积图容器（两个并排） */
+        #contentLayer .dual-chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width:900px) {
+            #contentLayer .dual-chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 哑铃图容器 */
+        #contentLayer .dumbbell-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--divider);
+            border-radius: 4px;
+            background: var(--paper);
+            padding: 10px;
+        }
+        #contentLayer .dumbbell-wrapper svg {
+            width: 100%;
+            height: auto;
+            min-width: 950px;
+        }
+
+        /* 哑铃图下方的数据表格容器 */
+        #contentLayer .dumbbell-table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 16px;
+            border: 1px solid var(--divider);
+            border-radius: 4px;
+            background: var(--paper);
+        }
+        #contentLayer .dumbbell-table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            font-family: 'Libre Baskerville', serif;
+        }
+        #contentLayer .dumbbell-table-container th, 
+        #contentLayer .dumbbell-table-container td {
+            border-bottom: 1px solid var(--divider);
+            padding: 8px 12px;
+            text-align: center;
+        }
+        #contentLayer .dumbbell-table-container th {
+            background: var(--paper-dark);
+            font-weight: 600;
+            color: var(--ink-light);
+            font-family: 'Special Elite', monospace;
+            letter-spacing: 0.05em;
+        }
+        #contentLayer .dumbbell-table-container tr:last-child td { border-bottom: none; }
+        #contentLayer .dumbbell-table-container tr:hover { background: var(--paper-dark); }
+        #contentLayer .dumbbell-table-container .diff-highlight { 
+            font-weight: 600; 
+            color: var(--rust);
+        }
+        #contentLayer .dumbbell-table-container .category-row td {
+            background: var(--paper-darker);
+            font-weight: 700;
+            color: var(--ink);
+            border-top: 2px solid var(--divider);
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+        }
+        @media (max-width: 700px) {
+            #contentLayer .dumbbell-table-container table { font-size: 11px; }
+            #contentLayer .dumbbell-table-container th, #contentLayer .dumbbell-table-container td { padding: 6px 8px; }
+        }
+
+        /* 桑基图控制区 */
+        #contentLayer .sankey-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+        #contentLayer .sankey-controls .year-info {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+        }
+        #contentLayer .sankey-controls .slider-wrapper {
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #contentLayer .sankey-controls input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--divider);
+            border-radius: 4px;
+            outline: none;
+        }
+        #contentLayer .sankey-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--rust);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #contentLayer .sankey-controls .total-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.7rem;
+            color: var(--ink-muted);
+            background: var(--paper-dark);
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        /* 自定义桑基图图例（新增） */
+        #contentLayer .sankey-custom-legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            padding: 14px 18px;
+            box-shadow: var(--shadow-soft);
+            font-family: 'Times New Roman', 'Playfair Display', serif;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        #contentLayer .sankey-custom-legend .legend-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--ink);
+            margin-bottom: 2px;
+        }
+        #contentLayer .sankey-custom-legend .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--ink-light);
+            padding: 2px 0;
+        }
+        #contentLayer .sankey-custom-legend .legend-row .dot {
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        #contentLayer .sankey-custom-legend .legend-row .val {
+            color: var(--ink-muted);
+            font-size: 0.75rem;
+        }
+
+        /* 折线图播放控制 (四个独立图表) */
+        #contentLayer .line-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #contentLayer .line-controls button {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            padding: 6px 18px;
+            background: var(--paper-dark);
+            border: 1px solid var(--divider);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            color: var(--ink-light);
+        }
+        #contentLayer .line-controls button:hover {
+            background: var(--rust);
+            color: white;
+            border-color: var(--rust);
+        }
+        #contentLayer .line-controls button.pause {
+            background: var(--rust);
+            color: white;
+            border-color: var(--rust);
+        }
+        #contentLayer .line-controls .year-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* 四格图表网格 */
+        #contentLayer .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        #contentLayer .chart-grid .chart-box {
+            background: var(--paper);
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: var(--shadow-soft);
+            height: 420px;
+            border: 1px solid var(--divider);
+        }
+        @media (max-width: 1000px) {
+            #contentLayer .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================================
+           结论文字框 - 排版更新
+           ============================================================ */
+        #contentLayer .conclusion-box {
+            background: var(--paper-dark);
+            border-left: 4px solid var(--rust);
+            padding: 28px 32px;
+            margin: 20px 0 0;
+            border-radius: 0 4px 4px 0;
+            font-family: 'Times New Roman', 'Playfair Display', serif; /* 统一数字与文字字体 */
+        }
+        /* 针对正文段落启用首行缩进两字符 */
+        #contentLayer .conclusion-box p {
+            font-family: 'Times New Roman', 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--ink-light);
+            line-height: 1.8;
+            margin: 0.6em 0;
+            text-indent: 2em;
+        }
+        /* 专门修正板块4拐点段落的缩进问题 */
+        #part-four .conclusion-box p {
+            text-indent: 0 !important;
+        }
+        #contentLayer .conclusion-box .highlight {
+            font-family: 'Times New Roman', 'Playfair Display', serif;
+            color: var(--rust);
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        #contentLayer .conclusion-box .conclusion-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 0.5em;
+            display: block;
+            font-family: 'Times New Roman', 'Playfair Display', serif;
+        }
+
+        /* 拐点标注 - 添加垂直居中与圆框 */
+        #contentLayer .inflection-mark {
+            display: inline-block;
+            vertical-align: middle; /* 用于在行内垂直居中 */
+            background: var(--rust);
+            color: white;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        /* 总结文档区域缩进 */
+        #part-five .conclusion-document p {
+            text-indent: 2em;
+        }
+
+        /* ============================================================
+           板块 4 · 票房饼图样式适配
+           ============================================================ */
+        #contentLayer .pie-chart-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px 20px;
+            width: 100%;
+        }
+        #contentLayer .pie-chart-card {
+            background: var(--paper-dark);
+            border: 1px solid var(--divider);
+            border-radius: 4px;
+            padding: 14px 10px 8px 10px;
+            box-shadow: var(--shadow-soft);
+        }
+        #contentLayer .pie-chart-card .year-label {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--ink);
+            text-align: center;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+        #contentLayer .pie-chart-card .year-label small {
+            font-family: 'Special Elite', monospace;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+            margin-left: 6px;
+        }
+        #contentLayer .pie-chart-container {
+            width: 100%;
+            height: 260px;
+        }
+        #contentLayer .pie-chart-card.champion-card {
+            grid-column: 1 / -1;
+            padding: 16px 10px 10px 10px;
+        }
+        #contentLayer .pie-chart-card.champion-card .pie-chart-container {
+            height: 300px;
+        }
+        @media (max-width: 1024px) {
+            #contentLayer .pie-chart-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            #contentLayer .pie-chart-card.champion-card {
+                grid-column: 1 / -1;
+            }
+        }
+        @media (max-width: 640px) {
+            #contentLayer .pie-chart-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            #contentLayer .pie-chart-container {
+                height: 220px;
+            }
+            #contentLayer .pie-chart-card.champion-card .pie-chart-container {
+                height: 240px;
+            }
+        }
+
+        /* 页脚 - 替换为指定内容 */
+        #contentLayer .footer-note {
+            text-align: center;
+            padding: 40px 20px;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem; /* 字体整体调大 */
+            letter-spacing: 0.2em;
+            color: #a09585;
+            line-height: 1.8;
+        }
+
+        /* ============================================================
+           内容页图 1. 封面底部：新增复古水印层
+           ============================================================ */
+        #part-one .block-header {
+            position: relative;
+            z-index: 2;
+        }
+        #part-one .header-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 90%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.04;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', serif;
+            font-weight: bold;
+            font-size: 8rem;
+            color: var(--ink-light);
+            letter-spacing: 0.15em;
+            line-height: 1.2;
+            overflow: hidden;
+        }
+        #part-one .header-watermark span {
+            display: block;
+            text-align: center;
+            line-height: 0.9;
+            transform: rotate(-8deg);
+            pointer-events: none;
+        }
+        @media (max-width: 768px) {
+            #part-one .header-watermark {
+                font-size: 4rem;
+                width: 100%;
+            }
+        }
+
+        /* 响应式内容层 */
+        @media (max-width:768px) {
+            #contentLayer .main-container {
+                padding: 0 16px;
+            }
+            #contentLayer .section-block {
+                padding: 40px 0;
+            }
+            #contentLayer .section-block .block-header h2 {
+                font-size: 1.6rem;
+            }
+            #contentLayer .chart-container .chart-box {
+                height: 280px;
+            }
+            #contentLayer .chart-grid .chart-box {
+                height: 280px;
+            }
+            #contentLayer .nav-links {
+                gap: 16px;
+                font-size: 0.7rem;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            #contentLayer .nav-tag {
+                font-size: 0.7rem;
+                padding: 6px 14px;
+            }
+            #contentLayer .archive-nav {
+                padding: 14px 16px 18px;
+            }
+            #contentLayer .archive-nav.scrolled {
+                padding: 10px 16px 14px;
+            }
+            #contentLayer .sankey-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            #contentLayer .line-controls {
+                gap: 8px;
+            }
+        }
+
+        /* ============================================================
+           侧边栏样式 (#sidebar)
+           ============================================================ */
+        #sidebar {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(247, 243, 235, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 18px 12px;
+            border-radius: 30px;
+            border: 1px solid var(--divider);
+            box-shadow: var(--shadow-medium);
+            transition: all var(--transition-medium);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #sidebar.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        #sidebar .sidebar-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--divider);
+            border: 1px solid transparent;
+            transition: all var(--transition-medium);
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        #sidebar .sidebar-dot:hover {
+            transform: scale(1.3);
+            background: var(--rust-light);
+            border-color: var(--rust);
+        }
+        #sidebar .sidebar-dot.active {
+            background: var(--rust);
+            border-color: var(--rust);
+            box-shadow: 0 0 0 3px rgba(139, 58, 58, 0.2);
+            transform: scale(1.15);
+        }
+        #sidebar .sidebar-dot .dot-tooltip {
+            position: absolute;
+            right: calc(100% + 16px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--paper-dark);
+            border: 1px solid var(--divider);
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.55rem;
+            letter-spacing: 0.1em;
+            color: var(--ink-muted);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium);
+            box-shadow: var(--shadow-soft);
+        }
+        #sidebar .sidebar-dot:hover .dot-tooltip {
+            opacity: 1;
+        }
+        #sidebar .sidebar-dot.active .dot-tooltip {
+            color: var(--rust);
+            border-color: var(--rust-light);
+        }
+
+        @media (max-width:768px) {
+            #sidebar {
+                right: 10px;
+                padding: 14px 8px;
+                gap: 10px;
+            }
+            #sidebar .sidebar-dot {
+                width: 8px;
+                height: 8px;
+            }
+            #sidebar .sidebar-dot .dot-tooltip {
+                display: none;
+            }
+        }
+        @media (max-width:480px) {
+            #sidebar {
+                right: 6px;
+                padding: 10px 6px;
+                gap: 8px;
+                border-radius: 20px;
+            }
+            #sidebar .sidebar-dot {
+                width: 6px;
+                height: 6px;
+            }
+        }
+
+        /* ============================================================
+           工具提示（哑铃图自定义）
+           ============================================================ */
+        #dumbbell-tooltip {
+            position: fixed;
+            display: none;
+            background: rgba(15, 23, 42, 0.92);
+            color: #f1f5f9;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 150px;
+            z-index: 300;
+        }
+        #dumbbell-tooltip .word {
+            font-weight: 600;
+            font-size: 14px;
+            color: #f8fafc;
+        }
+        #dumbbell-tooltip .val {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        #dumbbell-tooltip .diff {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 4px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    封面层
+    ============================================================ -->
+    <div id="coverLayer">
+        <div class="cover-wrapper">
+            <div class="cover-dossier" id="coverDossier">
+
+                <!-- 水印 -->
+                <div class="watermark-layer">
+                    <div class="watermark-half british">
+                        <svg class="watermark-svg" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="60" y="40" width="50" height="150" rx="2" fill="currentColor" opacity="0.7"/>
+                            <rect x="55" y="30" width="60" height="18" rx="3" fill="currentColor" opacity="0.8"/>
+                            <polygon points="70,10 100,10 95,30 75,30" fill="currentColor" opacity="0.7"/>
+                            <circle cx="85" cy="55" r="14" fill="none" stroke="currentColor" stroke-width="3" opacity="0.6"/>
+                            <line x1="85" y1="55" x2="85" y2="45" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+                            <line x1="85" y1="55" x2="92" y2="55" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+                            <rect x="56" y="190" width="58" height="8" rx="2" fill="currentColor" opacity="0.5"/>
+                            <rect x="135" y="100" width="28" height="90" rx="3" fill="currentColor" opacity="0.55"/>
+                            <rect x="130" y="95" width="38" height="15" rx="6" fill="currentColor" opacity="0.6"/>
+                            <rect x="143" y="120" width="12" height="18" rx="1" fill="var(--paper)" opacity="0.3"/>
+                            <line x1="15" y1="200" x2="55" y2="260" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                            <line x1="55" y1="200" x2="15" y2="260" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                            <line x1="35" y1="200" x2="35" y2="260" stroke="currentColor" stroke-width="0.8" opacity="0.25"/>
+                            <line x1="15" y1="230" x2="55" y2="230" stroke="currentColor" stroke-width="0.8" opacity="0.25"/>
+                        </svg>
+                        <span class="word-watermark" style="top:25%;right:10%;">colour · theatre · biscuit · lift · flat</span>
+                        <span class="word-watermark" style="top:38%;right:8%;">autumn · petrol · holiday · queue</span>
+                        <span class="word-watermark" style="top:60%;right:12%;">trousers · torch · rubbish · chips</span>
+                    </div>
+                    <div class="watermark-half american">
+                        <svg class="watermark-svg" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="65" y="50" width="16" height="70" rx="2" fill="currentColor" opacity="0.6"/>
+                            <polygon points="60,50 86,50 82,35 64,35" fill="currentColor" opacity="0.55"/>
+                            <circle cx="73" cy="30" r="10" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.5"/>
+                            <line x1="63" y1="55" x2="55" y2="75" stroke="currentColor" stroke-width="3" opacity="0.5"/>
+                            <line x1="83" y1="55" x2="91" y2="75" stroke="currentColor" stroke-width="3" opacity="0.5"/>
+                            <rect x="58" y="120" width="30" height="60" rx="3" fill="currentColor" opacity="0.5"/>
+                            <rect x="20" y="200" width="120" height="8" rx="1" fill="currentColor" opacity="0.35"/>
+                            <rect x="20" y="214" width="120" height="8" rx="1" fill="currentColor" opacity="0.35"/>
+                            <rect x="20" y="228" width="120" height="8" rx="1" fill="currentColor" opacity="0.35"/>
+                            <rect x="20" y="242" width="120" height="8" rx="1" fill="currentColor" opacity="0.35"/>
+                            <rect x="20" y="256" width="50" height="30" rx="2" fill="currentColor" opacity="0.4"/>
+                            <circle cx="30" cy="265" r="1.5" fill="var(--paper)" opacity="0.3"/>
+                            <circle cx="40" cy="270" r="1.5" fill="var(--paper)" opacity="0.3"/>
+                            <circle cx="50" cy="262" r="1.5" fill="var(--paper)" opacity="0.3"/>
+                            <circle cx="35" cy="275" r="1.5" fill="var(--paper)" opacity="0.25"/>
+                            <circle cx="55" cy="272" r="1.5" fill="var(--paper)" opacity="0.25"/>
+                        </svg>
+                        <span class="word-watermark" style="top:25%;left:10%;">color · theater · cookie · elevator · apartment</span>
+                        <span class="word-watermark" style="top:38%;left:8%;">fall · gas · vacation · line</span>
+                        <span class="word-watermark" style="top:60%;left:12%;">pants · flashlight · trash · fries</span>
+                    </div>
+                </div>
+
+                <!-- 四角标签 (修改年份与档案编号) -->
+                <span class="corner-tag top-left-tag">档案编号：ENG-2026</span>
+                <span class="corner-tag top-right-tag">密级：绝密</span>
+                <span class="corner-tag bottom-left-tag">调查委员会</span>
+                <span class="corner-tag bottom-right-tag">1900 — 2020</span>
+
+                <!-- X形封条 -->
+                <div class="seal-tapes" id="sealTapes">
+                    <div class="seal-tape tape-one"></div>
+                    <div class="seal-tape tape-two"></div>
+                    <span class="tape-text top-left">CONFIDENTIAL</span>
+                    <span class="tape-text bottom-right">CONFIDENTIAL</span>
+                    <span class="tape-text top-right">SEALED</span>
+                    <span class="tape-text bottom-left">SEALED</span>
+                </div>
+
+                <!-- 标题层 -->
+                <div class="title-layer" id="titleLayer">
+                    <span class="title-top-label">◆ 大西洋两岸语言演变调查 ◆</span>
+                    <h1 class="title-main">
+                        英式英语与美式英语的<br /><span class="italic-highlight">百年纠葛</span>
+                    </h1>
+                    <p class="title-sub">基于百年语料数据的语言差异可视化研究</p>
+                    <span class="title-dateline">—— 未解密档案 ——</span>
+                </div>
+
+                <!-- 中央蜡封 -->
+                <div class="wax-seal-container" id="waxSealContainer" title="点击探索">
+                    <div class="wax-seal" id="waxSeal">
+                        <div class="seal-emblem">
+                            <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,220,200,0.35)" stroke-width="2.5"/>
+                                <circle cx="30" cy="30" r="20" fill="none" stroke="rgba(255,220,200,0.2)" stroke-width="1.2" stroke-dasharray="3,5"/>
+                                <text x="30" y="37" text-anchor="middle" font-family="'Playfair Display','Georgia',serif"
+                                font-size="28" font-weight="700" fill="rgba(255,225,210,0.7)"
+                                font-style="italic" letter-spacing="0">?</text>
+                                <circle cx="30" cy="30" r="29" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="wax-drips">
+                        <div class="wax-drip"></div>
+                        <div class="wax-drip"></div>
+                        <div class="wax-drip"></div>
+                    </div>
+                </div>
+
+                <!-- 探索提示 - 替换为菱形符号，修改文字 -->
+                <div class="explore-hint" id="exploreHint">
+                    <span class="hint-symbol">✦</span>
+                    <span class="hint-text">点击蜡封 · 探索档案</span>
+                </div>
+
+                <!-- 开封闪光 -->
+                <div class="unseal-flash" id="unsealFlash"></div>
+
+                <!-- 开封后显示文字 -->
+                <div class="revealed-text" id="revealedText">
+                    <div class="revealed-title">档案已解锁</div>
+                    <div class="revealed-sub">封印解除 · 真相即将呈现</div>
+                    <button class="revealed-link" id="enterBtn">进入档案 →</button>
+                </div>
+
+            </div>
+        </div>
+        <!-- 碎片容器（由JS动态生成） -->
+        <div id="fragmentsContainer" style="position:fixed;inset:0;pointer-events:none;z-index:100;"></div>
+    </div>
+
+    <!-- ============================================================
+    内容层
+    ============================================================ -->
+    <div id="contentLayer">
+
+        <!-- 导航栏 (修改档案编号, 新增引言导航) -->
+        <nav class="archive-nav" id="topNav">
+            <div class="nav-tag">
+                <span class="tag-dot"></span> 档案编号：ENG-2026-DECLASSIFIED
+            </div>
+            <ul class="nav-links">
+                <li><a href="#part-one">Ⅰ · 封面</a></li>
+                <li><a href="#part-intro">Ⅱ · 引言</a></li>
+                <li><a href="#part-two">Ⅲ · 趋势</a></li>
+                <li><a href="#part-three">Ⅳ · 渗透</a></li>
+                <li><a href="#part-four">Ⅴ · 拐点</a></li>
+                <li><a href="#part-five">Ⅵ · 总结</a></li>
+            </ul>
+        </nav>
+
+        <div class="main-container">
+
+            <!-- ==========================================================
+            板块 1：封面标题区（已通过 CSS 实现完美的上下等距留白，新增水印）
+            ========================================================== -->
+            <section class="section-block" id="part-one">
+                <!-- 新增复古背景水印 -->
+                <div class="header-watermark">
+                    <span>ENGLISH<br>ENGLISH</span>
+                </div>
+                <div class="block-header">
+                    <h2>英式英语与美式英语的百年纠葛</h2>
+                    <div class="subtitle">基于百年语料数据的语言差异可视化研究</div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; align-items: center; margin-top: 10px; padding-bottom: 0px; font-family: 'Special Elite', monospace; font-size: 0.7rem; letter-spacing: 0.2em; color: var(--ink-muted);">
+                    <span style="display: inline-block; animation: hint-float 2s ease-in-out infinite;">▼ 向下滚动探索 ▼</span>
+                </div>
+
+                <div class="ink-blot" style="top:10%;left:5%;width:200px;height:200px;"></div>
+                <div class="ink-blot" style="bottom:10%;right:8%;width:160px;height:160px;"></div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ==========================================================
+            板块 1.5：引言区（新增板块）修改了标点和措辞
+            ========================================================== -->
+            <section class="section-block" id="part-intro" style="display: flex; flex-direction: column; justify-content: center; min-height: calc(100vh - 60px); padding: 80px 0 80px;">
+                <div class="block-content" style="max-width: 850px; margin: 0 auto; position: relative;">
+                    <div style="background: var(--paper-dark); border: 1px solid var(--divider); padding: 50px 40px; border-radius: 4px; box-shadow: var(--shadow-medium); position: relative;">
+                        <span style="font-family: 'Playfair Display', serif; font-size: 5rem; color: var(--rust); opacity: 0.2; position: absolute; top: -15px; left: 10px; line-height: 1; pointer-events: none;">“</span>
+                        <div style="font-family: 'Playfair Display', serif; font-size: 1.5rem; line-height: 2; color: var(--ink-light); text-align: center; margin-top: 10px; position: relative; z-index: 1;">
+                            <p style="margin: 0;">
+                                明明根源是同一种英语，英美两国却慢慢长出了两套不一样的用词习惯：同一个拼写有两种写法、一样东西叫法完全不同……
+                            </p>
+                            <p style="margin: 20px 0 0;">
+                                一百多年来，这两种英语是越走越远，还是慢慢融合了？
+                            </p>
+                        </div>
+                        <div style="margin-top: 24px; width: 60px; height: 3px; background: var(--rust); margin-left: auto; margin-right: auto; opacity: 0.5; border-radius: 2px;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ==========================================================
+            板块 2：核心问题 + 宏观趋势验证 (索引更新为Ⅲ)
+            ========================================================== -->
+            <section class="section-block" id="part-two">
+                <div class="block-header">
+                    <h2>核心问题：百年间，英美英语的使用差异变大了还是变小了？</h2>
+                    <div class="subtitle">宏观趋势验证 · 1900–2020</div>
+                </div>
+
+                <div class="block-content">
+
+                    <!-- 双堆叠面积图 -->
+                    <div class="dual-chart-grid">
+                        <div class="chart-container">
+                            <div class="chart-title">🇬🇧 英国出版物 · 英式 vs 美式 堆叠面积图</div>
+                            <div id="chart-uk-stack" class="chart-box"></div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">🇺🇸 美国出版物 · 美式 vs 英式 堆叠面积图</div>
+                            <div id="chart-us-stack" class="chart-box"></div>
+                        </div>
+                    </div>
+
+                    <!-- 哑铃图 -->
+                    <div class="chart-container" style="overflow:visible;">
+                        <div class="chart-title">4 大类词汇 1900 年 vs 2020 年 哑铃图</div>
+                        <div class="dumbbell-wrapper" id="dumbbellChart">
+                            <!-- 由 JavaScript 动态生成 SVG -->
+                        </div>
+                        <div class="dumbbell-table-container" id="dumbbellTableContainer"></div>
+                    </div>
+
+                    <!-- 更新后的结论 (修改了措辞：单向向->持续向) -->
+                    <div class="conclusion-box">
+                        <span class="conclusion-title"><span class="highlight">核心结论：</span>英美英语词汇差异整体持续缩小，美式英语持续向英国出版物渗透。</span>
+                        <p>英国本土出版物文本内美式词汇整体使用占比实现长期持续攀升，渗透率由 <span class="highlight">1900</span> 年的约 <span class="highlight">24%</span> 稳步上涨至 <span class="highlight">2020</span> 年的 <span class="highlight">37%</span>，<span class="highlight">120</span> 年间累计提升 <span class="highlight">13</span> 个百分点；结合页面双堆叠面积图的整体份额时序走势、词汇分组哑铃图的年份差值对照数据可共同佐证，四大分类下绝大多数词汇的英美两国使用鸿沟持续明显收窄，语言流动呈现高度不对称特征，美式词汇向英国单向流入趋势突出，英式词汇对美国本土文本的反向渗透规模微弱，无法动摇美式英语在美国出版物中的主流地位。</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ==========================================================
+            板块 3：美式英语渗透路径拆解（4 类词汇）(索引更新为Ⅳ)
+            ========================================================== -->
+            <section class="section-block" id="part-three">
+                <div class="block-header">
+                    <!-- 标题4强制应用Times New Roman字体 -->
+                    <h2>美式英语如何渗透英式英语？<span style="font-family: 'Times New Roman', serif;"> 4</span> 大类词汇差异分析</h2>
+                    <div class="subtitle">渗透路径拆解 · 1900–2020</div>
+                </div>
+
+                <div class="block-content">
+
+                    <!-- 桑基图 -->
+                    <div class="chart-container">
+                        <div class="chart-title">美式英语向英国的渗透流量与占比 (桑基图)</div>
+                        <div class="sankey-controls">
+                            <div class="year-info">📅 <span id="yearDisplay">2020</span> 年</div>
+                            <div class="slider-wrapper">
+                                <span style="font-size:13px;color:var(--ink-muted);">1900</span>
+                                <input type="range" id="yearSlider" min="1900" max="2020" step="10" value="2020">
+                                <span style="font-size:13px;color:var(--ink-muted);">2020</span>
+                            </div>
+                            <div class="total-label">📊 总体渗透率 <strong id="totalDisplay">36.62%</strong></div>
+                        </div>
+                        <!-- 新增自定义图例（颜色已修改为同色系由浅到深） -->
+                        <div class="sankey-custom-legend">
+                            <div class="legend-title">渗透水平阈值</div>
+                            <div class="legend-row"><span class="dot" style="background:#cce0e8;"></span>低渗透 <span class="val">&lt; 5%</span></div>
+                            <div class="legend-row"><span class="dot" style="background:#6fa2b8;"></span>中渗透 <span class="val">5% ~ 10%</span></div>
+                            <div class="legend-row"><span class="dot" style="background:#33617a;"></span>高渗透 <span class="val">&gt; 10%</span></div>
+                        </div>
+                        <div id="chart-sankey" class="chart-box" style="height:480px;"></div>
+                    </div>
+
+                    <!-- 四类词汇折线趋势（四个独立图表，带播放控制 + DataZoom 滑块） -->
+                    <div class="chart-container">
+                        <div class="chart-title" style="font-size: 0.8rem; letter-spacing: 0.25em;">4 大类词汇百年变化趋势 (英国出版物中美式用法占比)</div>
+                        <div class="line-controls">
+                            <button id="playBtn">▶ 播放</button>
+                            <button id="resetBtn">⟳ 重置</button>
+                            <span class="year-label" id="yearDisplayLine">1900</span>
+                        </div>
+                        <div class="chart-grid">
+                            <div id="chart1" class="chart-box"></div>
+                            <div id="chart2" class="chart-box"></div>
+                            <div id="chart3" class="chart-box"></div>
+                            <div id="chart4" class="chart-box"></div>
+                        </div>
+                    </div>
+
+                    <!-- 更新后的结论 -->
+                    <div class="conclusion-box">
+                        <span class="conclusion-title"><span class="highlight">渗透强度排序：</span><span class="highlight">饮食类 &gt; 拼写类 &gt; 交通生活类 &gt; 娱乐体育类</span></span>
+                        <p>饮食、拼写类词汇整体渗透基底最为突出，其中饮食词汇天然互通，长期占据高渗透层级，拼写词汇百年英美使用差距收缩幅度最大；娱乐体育类词汇受本土文化习惯深度绑定，在 <span class="highlight">1990</span> 年之前渗透基数最弱。结合动态折线图与逐年滑动桑基图时序数据可发现，词汇渗透分为两个清晰阶段：<span class="highlight">1900-1980</span> 年全品类均处于缓慢渗透状态，各类词汇渗透率小幅浮动、无明显上涨趋势；<span class="highlight">1990</span> 年出现关键转折节点，所有类别美式词汇渗透规模突然加速提升，文娱体育类词汇虽早期渗透偏弱，但拐点后的增长幅度显著增加。</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ==========================================================
+            板块 4：1990 年拐点与原因分析 (索引更新为Ⅴ)
+            ========================================================== -->
+            <section class="section-block" id="part-four">
+                <div class="block-header">
+                    <h2>1990 年关键拐点：美式英语渗透突然加速</h2>
+                    <div class="subtitle">拐点归因 · 1977–2020</div>
+                </div>
+
+                <div class="block-content">
+                    
+                    <!-- 全新置换的英国票房图表，并适配档案配色 -->
+                    <div class="chart-container">
+                        <div class="pie-chart-grid" id="chartGrid">
+                            <!-- 由 JavaScript 动态生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 更新后的结论（已修正首行缩进） -->
+                    <div class="conclusion-box">
+                        <p><span class="inflection-mark">🔍 拐点</span> <span class="highlight">1990 年是美式英语渗透的关键拐点，1990 年是美式英语词汇渗透的统一关键拐点</span>，全品类词汇渗透率同步进入高速增长区间，整体上涨时序与好莱坞影视全球化扩张的发展节点高度吻合，票房数据图表可提供外部实证支撑。好莱坞电影凭借广泛的群众传播基础，成为美式日常表达、拼写词汇持续输入英国文本的核心载体；透过 <span class="highlight">30</span> 年可视化数据可以看出，这场单向的英美词汇渗透并非独立的语言演变行为，其底层本质是流行文化对外输出、文化影响力跨国外溢所催生的语言变迁结果。</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ==========================================================
+            板块 5：总结结论 (索引更新为Ⅵ)
+            ========================================================== -->
+            <section class="section-block" id="part-five">
+                <div class="block-header">
+                    <h2>百年语言变迁总结</h2>
+                    <div class="subtitle">最终结论</div>
+                </div>
+
+                <div class="block-content" style="max-width:800px; margin:0 auto;">
+
+                    <div class="conclusion-document" style="background:var(--paper); border:2px solid var(--divider); padding:40px; box-shadow:var(--shadow-medium);">
+                        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; line-height:2; color:var(--ink-light);">
+                            <p>跨越 <span class="highlight">120</span> 年的时序数据与多类可视化图谱共同证明，百年间英美英语整体使用差异持续缩小，语言体系走向融合而非割裂分化。</p>
+                            <p>整体语言流动具备极强单向性，完整百年变迁全程表现为美式英语词汇持续向英国文本渗透，并未形成对等双向的语言影响。</p>
+                            <p>词汇渗透存在清晰分层规律：<span class="highlight">饮食、拼写</span>这类贴近日常生活的基础词汇更易实现跨地域流通渗透；文娱、体育等绑定本土文化认同的词汇受文化壁垒约束，整体普及节奏更为稳定。</p>
+                            <p><span class="highlight">1990</span> 年是划分语言变迁快慢阶段的关键节点，在此之后好莱坞影视产业的全球化扩张，成为拉动美式表达在英国加速普及、渗透率大幅上涨的核心诱因。</p>
+                            <p>从宏观视角来看，本次观测到的英美词汇百年变迁现象，是不同国家跨区域文化输出力、文化影响力差距最直观的语言层面体现。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- 页脚 - 更新数据来源与排版 -->
+        <div class="footer-note">
+            词汇数据来源：最长时序书面语料库Google Books Ngram Viewer<br/>
+            票房数据来源：英国本土年度票房数据Box office data © Box Office Mojo by IMDbPro
+        </div>
+    </div>
+
+    <!-- ============================================================
+    侧边栏导航（新增引言节点）
+    ============================================================ -->
+    <div id="sidebar">
+        <div class="sidebar-dot" data-target="part-one">
+            <span class="dot-tooltip">Ⅰ · 封面</span>
+        </div>
+        <div class="sidebar-dot" data-target="part-intro">
+            <span class="dot-tooltip">Ⅱ · 引言</span>
+        </div>
+        <div class="sidebar-dot active" data-target="part-two">
+            <span class="dot-tooltip">Ⅲ · 趋势</span>
+        </div>
+        <div class="sidebar-dot" data-target="part-three">
+            <span class="dot-tooltip">Ⅳ · 渗透</span>
+        </div>
+        <div class="sidebar-dot" data-target="part-four">
+            <span class="dot-tooltip">Ⅴ · 拐点</span>
+        </div>
+        <div class="sidebar-dot" data-target="part-five">
+            <span class="dot-tooltip">Ⅵ · 总结</span>
+        </div>
+    </div>
+
+    <!-- 哑铃图工具提示 -->
+    <div id="dumbbell-tooltip"></div>
+
+    <!-- ============================================================
+    JavaScript (已更新导航高亮逻辑与侧边栏数组)
+    ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // 1. 封面交互
+            // ============================================================
+            const coverLayer = document.getElementById('coverLayer');
+            const coverDossier = document.getElementById('coverDossier');
+            const waxSealContainer = document.getElementById('waxSealContainer');
+            const waxSeal = document.getElementById('waxSeal');
+            const sealTapes = document.getElementById('sealTapes');
+            const exploreHint = document.getElementById('exploreHint');
+            const unsealFlash = document.getElementById('unsealFlash');
+            const revealedText = document.getElementById('revealedText');
+            const titleLayer = document.getElementById('titleLayer');
+            const fragmentsContainer = document.getElementById('fragmentsContainer');
+            const enterBtn = document.getElementById('enterBtn');
+            const contentLayer = document.getElementById('contentLayer');
+            const sidebar = document.getElementById('sidebar');
+
+            let isUnsealed = false;
+
+            function getSealRect() {
+                return waxSeal.getBoundingClientRect();
+            }
+
+            function createFragments() {
+                const rect = getSealRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const count = 18;
+                for (let i = 0; i < count; i++) {
+                    const frag = document.createElement('div');
+                    frag.classList.add('seal-fragment');
+                    const size = Math.random() * 16 + 6;
+                    frag.style.width = size + 'px';
+                    frag.style.height = size + 'px';
+                    frag.style.left = cx + 'px';
+                    frag.style.top = cy + 'px';
+                    frag.style.position = 'fixed';
+                    frag.style.zIndex = '100';
+                    frag.style.borderRadius = '50%';
+                    frag.style.background = 'radial-gradient(circle at 40% 35%, #C86050, #7A2A2A, #4A1515)';
+                    frag.style.boxShadow = '0 2px 8px rgba(0,0,0,0.5)';
+                    frag.style.opacity = '0';
+                    frag.style.transition = 'none';
+                    frag.style.pointerEvents = 'none';
+                    fragmentsContainer.appendChild(frag);
+
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = Math.random() * 180 + 60;
+                    const dx = Math.cos(angle) * dist;
+                    const dy = Math.sin(angle) * dist;
+                    const rot = Math.random() * 720 - 360;
+                    const delay = Math.random() * 0.15;
+
+                    requestAnimationFrame(() => {
+                        frag.style.transition = 'all 0.7s cubic-bezier(0.25,0.1,0.25,1) ' + delay + 's';
+                        frag.style.opacity = '0.9';
+                        frag.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) rotate(' + rot +
+                            'deg) scale(' + (0.6 + Math.random() * 1.2) + ')';
+                    });
+                    setTimeout(() => {
+                        frag.style.transition = 'all 0.5s ease';
+                        frag.style.opacity = '0';
+                        frag.style.transform += ' scale(0.2)';
+                    }, 600 + delay * 1000);
+                    setTimeout(() => {
+                        if (frag.parentNode) frag.parentNode.removeChild(frag);
+                    }, 1300 + delay * 1000);
+                }
+            }
+
+            function unseal() {
+                if (isUnsealed) return;
+                isUnsealed = true;
+                unsealFlash.classList.add('active');
+                setTimeout(() => unsealFlash.classList.remove('active'), 250);
+                createFragments();
+                waxSealContainer.style.animation = 'none';
+                waxSealContainer.style.transition = 'all 0.5s ease-in';
+                waxSealContainer.style.transform = 'translateX(-50%) scale(0.2)';
+                waxSealContainer.style.opacity = '0';
+                waxSealContainer.style.filter = 'brightness(2) blur(8px)';
+                waxSealContainer.style.pointerEvents = 'none';
+                setTimeout(() => { coverDossier.classList.add('unsealing'); }, 150);
+                exploreHint.style.opacity = '0';
+                exploreHint.style.transition = 'opacity 0.4s ease';
+                titleLayer.style.transition = 'all 0.6s ease';
+                titleLayer.style.transform = 'translate(-50%, -50%) translateY(-8px)';
+                titleLayer.style.opacity = '0.6';
+                setTimeout(() => { revealedText.classList.add('show'); }, 500);
+                setTimeout(() => {
+                    coverDossier.style.transition = 'all 1.5s cubic-bezier(0.25,0.1,0.25,1)';
+                    coverDossier.style.boxShadow =
+                        '0 20px 70px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3), 0 0 80px rgba(200,160,100,0.15), inset 0 0 0 1px rgba(255,255,255,0.25)';
+                }, 600);
+            }
+
+            function enterArchive() {
+                coverLayer.classList.add('fade-out');
+                contentLayer.classList.add('active');
+                sidebar.classList.add('visible');
+                setTimeout(() => { initContentAnimations(); }, 200);
+                setTimeout(() => {
+                    coverLayer.style.display = 'none';
+                    document.body.classList.remove('no-scroll');
+                }, 1200);
+            }
+
+            waxSealContainer.addEventListener('click', function(e) { e.stopPropagation(); if (!isUnsealed) unseal(); });
+            waxSealContainer.addEventListener('mouseenter', function() {
+                if (!isUnsealed) { waxSeal.style.transition = 'all 0.3s ease';
+                    waxSeal.style.filter = 'brightness(1.1)'; }
+            });
+            waxSealContainer.addEventListener('mouseleave', function() {
+                if (!isUnsealed) { waxSeal.style.transition = 'all 0.5s ease';
+                    waxSeal.style.filter = 'brightness(1)'; }
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !isUnsealed) unseal();
+                if (e.key === 'Enter' && isUnsealed && revealedText.classList.contains('show')) enterArchive();
+            });
+            waxSealContainer.addEventListener('touchend', function(e) { e.preventDefault(); if (!isUnsealed) unseal(); });
+            enterBtn.addEventListener('click', enterArchive);
+
+            // ============================================================
+            // 2. 内容页导航 & 侧边栏高亮 (新增引言节点)
+            // ============================================================
+            const nav = document.getElementById('topNav');
+            const navLinks = document.querySelectorAll('#contentLayer .nav-links a');
+            const sections = [
+                document.getElementById('part-one'),
+                document.getElementById('part-intro'), // 新插入的引言
+                document.getElementById('part-two'),
+                document.getElementById('part-three'),
+                document.getElementById('part-four'),
+                document.getElementById('part-five'),
+            ];
+            const sidebarDots = document.querySelectorAll('#sidebar .sidebar-dot');
+
+            function updateNavigation() {
+                if (window.scrollY > 50) nav.classList.add('scrolled');
+                else nav.classList.remove('scrolled');
+                let currentIdx = 0;
+                sections.forEach((section, idx) => {
+                    if (section && window.scrollY >= section.offsetTop - 250) currentIdx = idx;
+                });
+                navLinks.forEach((link, idx) => { link.classList.toggle('active', idx === currentIdx); });
+                sidebarDots.forEach((dot, idx) => { dot.classList.toggle('active', idx === currentIdx); });
+            }
+            window.addEventListener('scroll', updateNavigation);
+
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var targetId = this.getAttribute('href').substring(1);
+                    var target = document.getElementById(targetId);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+            sidebarDots.forEach(function(dot) {
+                dot.addEventListener('click', function() {
+                    var targetId = this.getAttribute('data-target');
+                    var target = document.getElementById(targetId);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+
+            // ============================================================
+            // 3. 图表初始化（需在内容显示后调用）
+            // ============================================================
+            var contentAnimated = false;
+
+            function initContentAnimations() {
+                if (contentAnimated) return;
+                contentAnimated = true;
+
+                // ---- 3.1 堆叠面积图 ----
+                const years = [1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
+                const ukBritish = [68.38, 71.54, 72.92, 74.06, 75.99, 76.68, 75.85, 73.87, 71.62, 69.46, 64.62, 56.95, 55.67];
+                const ukAmerican = [31.62, 28.46, 27.08, 25.94, 24.01, 23.32, 24.15, 26.13, 28.38, 30.54, 35.38, 43.05, 44.33];
+                const usBritish = [26.73, 27.95, 24.98, 29.89, 29.42, 31.07, 33.84, 32.79, 31.52, 30.08, 29.30, 31.56, 34.05];
+                const usAmerican = [73.27, 72.05, 75.02, 70.11, 70.58, 68.93, 66.16, 67.21, 68.48, 69.92, 70.70, 68.44, 65.95];
+
+                const blue = '#3A5A7C';
+                const red = '#8B3A3A';
+                const blueArea = 'rgba(58,90,124,0.25)';
+                const redArea = 'rgba(139,58,58,0.25)';
+
+                function createStackOption(data1, data2, name1, name2, color1, color2, area1, area2) {
+                    return {
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: { type: 'cross' },
+                            formatter: function(params) {
+                                let res = '<strong>' + params[0].axisValue + '</strong><br/>';
+                                params.forEach(p => {
+                                    res += p.marker + ' ' + p.seriesName + ' : <strong>' + p.value.toFixed(
+                                        1) + '%</strong><br/>';
+                                });
+                                return res;
+                            }
+                        },
+                        legend: { data: [name1, name2], top: 5, textStyle: { fontFamily: '"Special Elite",monospace',
+                                fontSize: 11 } },
+                        grid: { left: '6%', right: '6%', top: '18%', bottom: '18%' },
+                        xAxis: {
+                            type: 'category',
+                            data: years,
+                            boundaryGap: false, // 确保数据点在Y轴和结束边缘对齐
+                            axisTick: { alignWithLabel: true }, // 确保刻度与标签对齐
+                            axisLabel: { rotate: 30, fontFamily: '"Special Elite",monospace', fontSize: 10 }
+                        },
+                        yAxis: { 
+                            type: 'value', 
+                            min: 0, 
+                            max: 100, 
+                            interval: 20, // 强制显示 0, 20, 40, 60, 80, 100 刻度
+                            axisLabel: { formatter: '{value}%', fontFamily: '"Special Elite",monospace', fontSize: 10 } 
+                        },
+                        series: [{
+                            name: name1,
+                            type: 'line',
+                            smooth: true,
+                            areaStyle: { opacity: 0.4, color: area1 },
+                            data: data1,
+                            lineStyle: { color: color1 },
+                            itemStyle: { color: color1 },
+                            symbol: 'circle',
+                            symbolSize: 6,
+                        }, {
+                            name: name2,
+                            type: 'line',
+                            smooth: true,
+                            areaStyle: { opacity: 0.4, color: area2 },
+                            data: data2,
+                            lineStyle: { color: color2 },
+                            itemStyle: { color: color2 },
+                            symbol: 'circle',
+                            symbolSize: 6,
+                        }]
+                    };
+                }
+
+                var chartUKStack = echarts.init(document.getElementById('chart-uk-stack'));
+                var chartUSStack = echarts.init(document.getElementById('chart-us-stack'));
+                chartUKStack.setOption(createStackOption(ukBritish, ukAmerican, '英式词', '美式词', blue, red, blueArea,
+                    redArea));
+                chartUSStack.setOption(createStackOption(usAmerican, usBritish, '美式词', '英式词', blue, red, blueArea,
+                    redArea));
+
+                function setupStackInteractions(chart, name1, name2) {
+                    chart.on('legendselectchanged', function(params) {
+                        let opt = chart.getOption();
+                        let series = opt.series;
+                        let clickedName = params.name;
+                        let isSelected = params.selected[clickedName];
+
+                        series.forEach(s => {
+                            s.visible = true;
+                            if (s.name === name1) {
+                                if (clickedName === name1) {
+                                    s.areaStyle.opacity = isSelected ? 0.4 : 0;
+                                } else if (clickedName === name2) {
+                                    s.areaStyle.opacity = isSelected ? 0 : 0.4;
+                                }
+                            } else if (s.name === name2) {
+                                if (clickedName === name2) {
+                                    s.areaStyle.opacity = isSelected ? 0.4 : 0;
+                                } else if (clickedName === name1) {
+                                    s.areaStyle.opacity = isSelected ? 0 : 0.4;
+                                }
+                            }
+                        });
+                        chart.setOption(opt, true);
+                    });
+                }
+                setupStackInteractions(chartUKStack, '英式词', '美式词');
+                setupStackInteractions(chartUSStack, '美式词', '英式词');
+
+                // ---- 3.2 哑铃图 ----
+                const rawData = [
+                    { word: 'track list', us1900: 0.000000, uk1900: 0.007089, us2020: 0.026999, uk2020: 0.777973 },
+                    { word: 'American football', us1900: 0.855287, uk1900: 0.400696, us2020: 0.776210, uk2020: 0.074421 },
+                    { word: 'eggplant', us1900: 0.949627, uk1900: 0.385916, us2020: 0.945508, uk2020: 0.248860 },
+                    { word: 'cookie', us1900: 0.041725, uk1900: 0.080440, us2020: 0.782123, uk2020: 0.193434 },
+                    { word: 'center', us1900: 0.719408, uk1900: 0.035770, us2020: 0.887343, uk2020: 0.336441 },
+                    { word: 'theater', us1900: 0.393942, uk1900: 0.029263, us2020: 0.714707, uk2020: 0.169910 },
+                    { word: 'chips', us1900: 0.995106, uk1900: 0.989779, us2020: 0.970251, uk2020: 0.427809 },
+                    { word: 'labor', us1900: 0.971652, uk1900: 0.042854, us2020: 0.876546, uk2020: 0.367828 },
+                    { word: 'gasoline', us1900: 0.978846, uk1900: 0.254035, us2020: 0.839199, uk2020: 0.377102 },
+                    { word: 'garbage', us1900: 0.607604, uk1900: 0.113340, us2020: 0.786667, uk2020: 0.381284 },
+                    { word: 'organize', us1900: 0.991429, uk1900: 0.232313, us2020: 0.943325, uk2020: 0.636038 },
+                    { word: 'vacation', us1900: 0.571288, uk1900: 0.179371, us2020: 0.485012, uk2020: 0.194062 },
+                    { word: 'color', us1900: 0.942155, uk1900: 0.054138, us2020: 0.904129, uk2020: 0.380688 },
+                    { word: 'sidewalk', us1900: 0.455806, uk1900: 0.075118, us2020: 0.554282, uk2020: 0.302544 },
+                    { word: 'apartment', us1900: 0.139937, uk1900: 0.131881, us2020: 0.463481, uk2020: 0.317781 },
+                    { word: 'movie', us1900: 0.007339, uk1900: 0.067285, us2020: 0.281506, uk2020: 0.136484 },
+                    { word: 'bar', us1900: 0.949690, uk1900: 0.897877, us2020: 0.922296, uk2020: 0.777973 },
+                    { word: 'takeout', us1900: 0.478789, uk1900: 0.362503, us2020: 0.282462, uk2020: 0.193434 },
+                    { word: 'candy', us1900: 0.665537, uk1900: 0.310697, us2020: 0.512534, uk2020: 0.487620 },
+                    { word: 'soccer', us1900: 0.005121, uk1900: 0.015407, us2020: 0.026999, uk2020: 0.014332 }
+                ];
+
+                const categoryMap = {
+                    'color': '拼写 (Spelling)',
+                    'center': '拼写 (Spelling)',
+                    'organize': '拼写 (Spelling)',
+                    'labor': '拼写 (Spelling)',
+                    'theater': '拼写 (Spelling)',
+                    'apartment': '交通生活 (Daily Life)',
+                    'gasoline': '交通生活 (Daily Life)',
+                    'vacation': '交通生活 (Daily Life)',
+                    'garbage': '交通生活 (Daily Life)',
+                    'sidewalk': '交通生活 (Daily Life)',
+                    'cookie': '饮食 (Food)',
+                    'chips': '饮食 (Food)',
+                    'eggplant': '饮食 (Food)',
+                    'candy': '饮食 (Food)',
+                    'takeout': '饮食 (Food)',
+                    'movie': '娱乐体育 (Culture)',
+                    'soccer': '娱乐体育 (Culture)',
+                    'track list': '娱乐体育 (Culture)',
+                    'bar': '娱乐体育 (Culture)',
+                    'American football': '娱乐体育 (Culture)'
+                };
+                const categoryOrder = ['拼写 (Spelling)', '交通生活 (Daily Life)', '饮食 (Food)', '娱乐体育 (Culture)'];
+
+                let grouped = {};
+                rawData.forEach(item => {
+                    const cat = categoryMap[item.word] || '其他';
+                    if (!grouped[cat]) grouped[cat] = [];
+                    grouped[cat].push(item);
+                });
+                for (let cat in grouped) {
+                    grouped[cat].sort((a, b) => Math.abs(b.us2020 - b.uk2020) - Math.abs(a.us2020 - a.uk2020));
+                }
+                let displayData = [];
+                categoryOrder.forEach(cat => {
+                    if (grouped[cat] && grouped[cat].length > 0) {
+                        displayData.push({ type: 'header', text: cat });
+                        grouped[cat].forEach(item => {
+                            displayData.push({ type: 'data', ...item });
+                        });
+                    }
+                });
+
+                const tableData = displayData.filter(d => d.type === 'data');
+
+                // 绘制哑铃图 SVG
+                function renderDumbbell() {
+                    const wrapper = document.getElementById('dumbbellChart');
+                    const width = 1100,
+                        height = 680;
+                    const margin = { left: 200, right: 20, top: 20, bottom: 40 };
+                    const gap = 70;
+                    const chartWidth = (width - margin.left - margin.right - gap) / 2;
+                    const chartHeight = height - margin.top - margin.bottom;
+                    const rowHeight = chartHeight / displayData.length;
+
+                    let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+                    svg.style.width = '100%';
+                    svg.style.height = 'auto';
+
+                    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                    const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                    clipPath.setAttribute('id', 'circleClip');
+                    const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    clipCircle.setAttribute('cx', '0');
+                    clipCircle.setAttribute('cy', '0');
+                    clipCircle.setAttribute('r', '7');
+                    clipPath.appendChild(clipCircle);
+                    defs.appendChild(clipPath);
+                    svg.appendChild(defs);
+
+                    const dividerX = margin.left + chartWidth + gap / 2;
+                    const divLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    divLine.setAttribute('x1', dividerX);
+                    divLine.setAttribute('y1', margin.top);
+                    divLine.setAttribute('x2', dividerX);
+                    divLine.setAttribute('y2', height - margin.bottom);
+                    divLine.setAttribute('stroke', '#C4B9A6');
+                    divLine.setAttribute('stroke-dasharray', '6,6');
+                    divLine.setAttribute('stroke-width', '2');
+                    svg.appendChild(divLine);
+
+                    function drawXTicks(offsetX, labelY) {
+                        const ticks = [0, 0.25, 0.5, 0.75, 1];
+                        ticks.forEach(val => {
+                            const x = offsetX + val * chartWidth;
+                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            line.setAttribute('x1', x);
+                            line.setAttribute('y1', margin.top);
+                            line.setAttribute('x2', x);
+                            line.setAttribute('y2', labelY);
+                            line.setAttribute('stroke', '#D5CCBB');
+                            line.setAttribute('stroke-dasharray', '4,4');
+                            svg.appendChild(line);
+                            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                            text.setAttribute('x', x);
+                            text.setAttribute('y', labelY + 18);
+                            text.setAttribute('text-anchor', 'middle');
+                            text.setAttribute('font-size', '11');
+                            text.setAttribute('fill', '#6b5f52');
+                            text.textContent = (val * 100) + '%';
+                            svg.appendChild(text);
+                        });
+                    }
+                    drawXTicks(margin.left, height - margin.bottom);
+                    drawXTicks(margin.left + chartWidth + gap, height - margin.bottom);
+
+                    function addYearLabel(x, year) {
+                        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        text.setAttribute('x', x + chartWidth / 2);
+                        text.setAttribute('y', margin.top - 6);
+                        text.setAttribute('text-anchor', 'middle');
+                        text.setAttribute('font-size', '16');
+                        text.setAttribute('font-weight', 'bold');
+                        text.setAttribute('fill', '#1a1612');
+                        text.textContent = year + '年';
+                        svg.appendChild(text);
+                    }
+                    addYearLabel(margin.left, '1900');
+                    addYearLabel(margin.left + chartWidth + gap, '2020');
+
+                    const tooltip = document.getElementById('dumbbell-tooltip');
+
+                    function showTooltip(e, item, year, usKey, ukKey) {
+                        const usVal = item[usKey];
+                        const ukVal = item[ukKey];
+                        const diff = Math.abs(usVal - ukVal);
+                        tooltip.style.display = 'block';
+                        tooltip.innerHTML =
+                            `
+                            <div class="word">${item.word}</div>
+                            <div style="font-size:12px; color:#94a3b8; margin-bottom:4px;">${year}年</div>
+                            <div class="val"><span>🇺🇸 美国</span><span>${(usVal * 100).toFixed(2)}%</span></div>
+                            <div class="val"><span>🇬🇧 英国</span><span>${(ukVal * 100).toFixed(2)}%</span></div>
+                            <div class="diff val"><span>差异</span><span>${(diff * 100).toFixed(2)} 百分点</span></div>
+                        `;
+                        let x = e.clientX + 14,
+                            y = e.clientY - 10;
+                        if (x + 180 > window.innerWidth) x = e.clientX - 180;
+                        if (y + 120 > window.innerHeight) y = window.innerHeight - 130;
+                        if (y < 10) y = 10;
+                        tooltip.style.left = x + 'px';
+                        tooltip.style.top = y + 'px';
+                    }
+
+                    function hideTooltip() { tooltip.style.display = 'none'; }
+
+                    displayData.forEach((item, i) => {
+                        const y = margin.top + i * rowHeight + rowHeight / 2;
+                        if (item.type === 'header') {
+                            const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                            bgRect.setAttribute('x', margin.left - 15);
+                            bgRect.setAttribute('y', y - rowHeight / 2);
+                            bgRect.setAttribute('width', width - margin.left - margin.right + 30);
+                            bgRect.setAttribute('height', rowHeight);
+                            bgRect.setAttribute('fill', '#EBE5D9');
+                            bgRect.setAttribute('rx', '4');
+                            svg.appendChild(bgRect);
+                            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                            text.setAttribute('x', margin.left - 12);
+                            text.setAttribute('y', y + 4);
+                            text.setAttribute('text-anchor', 'end');
+                            text.setAttribute('font-size', '13');
+                            text.setAttribute('font-weight', 'bold');
+                            text.setAttribute('fill', '#3d362e');
+                            text.textContent = '📌 ' + item.text;
+                            svg.appendChild(text);
+                            return;
+                        }
+
+                        const leftXBase = margin.left;
+                        const rightXBase = margin.left + chartWidth + gap;
+                        const usValL = item.us1900,
+                            ukValL = item.uk1900;
+                        const xUsL = leftXBase + usValL * chartWidth;
+                        const xUkL = leftXBase + ukValL * chartWidth;
+                        const lineL = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        lineL.setAttribute('x1', xUsL);
+                        lineL.setAttribute('y1', y);
+                        lineL.setAttribute('x2', xUkL);
+                        lineL.setAttribute('y2', y);
+                        // 修改连线颜色加深，突显差异
+                        lineL.setAttribute('stroke', '#8a7e6e');
+                        lineL.setAttribute('stroke-width', '3');
+                        lineL.setAttribute('opacity', '0.8');
+                        svg.appendChild(lineL);
+
+                        const usValR = item.us2020,
+                            ukValR = item.uk2020;
+                        const xUsR = rightXBase + usValR * chartWidth;
+                        const xUkR = rightXBase + ukValR * chartWidth;
+                        const lineR = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        lineR.setAttribute('x1', xUsR);
+                        lineR.setAttribute('y1', y);
+                        lineR.setAttribute('x2', xUkR);
+                        lineR.setAttribute('y2', y);
+                        // 修改连线颜色加深
+                        lineR.setAttribute('stroke', '#8a7e6e');
+                        lineR.setAttribute('stroke-width', '3');
+                        lineR.setAttribute('opacity', '0.8');
+                        svg.appendChild(lineR);
+
+                        function addFlag(x, y, country) {
+                            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                            g.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+                            const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+                            img.setAttribute('href', 'https://flagcdn.com/w40/' + country + '.png');
+                            img.setAttribute('x', '-7');
+                            img.setAttribute('y', '-7');
+                            img.setAttribute('width', '14');
+                            img.setAttribute('height', '14');
+                            img.setAttribute('clip-path', 'url(#circleClip)');
+                            img.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+                            img.setAttribute('pointer-events', 'none');
+                            g.appendChild(img);
+                            svg.appendChild(g);
+                        }
+                        addFlag(xUsL, y, 'us');
+                        addFlag(xUkL, y, 'gb');
+                        addFlag(xUsR, y, 'us');
+                        addFlag(xUkR, y, 'gb');
+
+                        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        label.setAttribute('x', margin.left - 12);
+                        label.setAttribute('y', y + 4);
+                        label.setAttribute('text-anchor', 'end');
+                        label.setAttribute('font-size', '13');
+                        label.setAttribute('fill', '#1a1612');
+                        label.setAttribute('font-weight', '500');
+                        label.textContent = item.word;
+                        svg.appendChild(label);
+
+                        function addHoverRect(x, y, w, h, item, year, usKey, ukKey) {
+                            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                            rect.setAttribute('x', x);
+                            rect.setAttribute('y', y - h / 2);
+                            rect.setAttribute('width', w);
+                            rect.setAttribute('height', h);
+                            rect.setAttribute('fill', 'transparent');
+                            rect.setAttribute('cursor', 'pointer');
+                            rect.addEventListener('mousemove', (e) => showTooltip(e, item, year, usKey, ukKey));
+                            rect.addEventListener('mouseleave', hideTooltip);
+                            svg.appendChild(rect);
+                        }
+                        addHoverRect(leftXBase, y, chartWidth, rowHeight, item, '1900', 'us1900', 'uk1900');
+                        addHoverRect(rightXBase, y, chartWidth, rowHeight, item, '2020', 'us2020', 'uk2020');
+                    });
+
+                    wrapper.innerHTML = '';
+                    wrapper.appendChild(svg);
+                }
+                renderDumbbell();
+
+                // 哑铃图对应的数据表格渲染
+                function renderDumbbellTable() {
+                    const container = document.getElementById('dumbbellTableContainer');
+                    let lastCategory = '';
+                    let tableHtml = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>词汇</th>
+                                    <th>美国 1900</th>
+                                    <th>英国 1900</th>
+                                    <th>差异 1900</th>
+                                    <th>美国 2020</th>
+                                    <th>英国 2020</th>
+                                    <th>差异 2020</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    tableData.forEach(item => {
+                        const cat = categoryMap[item.word] || '其他';
+                        const d1900 = Math.abs(item.us1900 - item.uk1900);
+                        const d2020 = Math.abs(item.us2020 - item.uk2020);
+                        if (cat !== lastCategory) {
+                            tableHtml += `
+                                <tr class="category-row">
+                                    <td colspan="7" style="text-align:left; padding-left:20px;">📌 ${cat}</td>
+                                </tr>
+                            `;
+                            lastCategory = cat;
+                        }
+                        tableHtml += `
+                            <tr>
+                                <td><strong>${item.word}</strong></td>
+                                <td>${(item.us1900 * 100).toFixed(2)}%</td>
+                                <td>${(item.uk1900 * 100).toFixed(2)}%</td>
+                                <td class="diff-highlight">${(d1900 * 100).toFixed(2)} 百分点</td>
+                                <td>${(item.us2020 * 100).toFixed(2)}%</td>
+                                <td>${(item.uk2020 * 100).toFixed(2)}%</td>
+                                <td class="diff-highlight">${(d2020 * 100).toFixed(2)} 百分点</td>
+                            </tr>
+                        `;
+                    });
+                    tableHtml += `</tbody></table>`;
+                    container.innerHTML = tableHtml;
+                }
+                renderDumbbellTable();
+
+                // ---- 3.3 桑基图 ----
+                const LEVEL_0 = ['拼写', '娱乐体育', '交通生活', '饮食'];
+                const LEVEL_1 = ['低渗透', '中渗透', '高渗透'];
+                const LEVEL_2 = ['影响有限或被保留', '部分领域选择性接受', '词汇层面广泛接受'];
+
+                // 为图例自定义节点颜色（已修改为同一个色系由浅到深，避开了结果列的颜色）
+                const nodeColors = {
+                    '低渗透': '#cce0e8',
+                    '中渗透': '#6fa2b8',
+                    '高渗透': '#33617a'
+                };
+
+                const YEARLY_DATA = {
+                    1900: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 1.97 },
+                            { source: '娱乐体育', target: '中渗透', value: 6.94 },
+                            { source: '交通生活', target: '低渗透', value: 3.77 },
+                            { source: '饮食', target: '高渗透', value: 11.79 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 5.74 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 6.94 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 11.79 }
+                        ],
+                        total: 24.47
+                    },
+                    1910: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 1.52 },
+                            { source: '娱乐体育', target: '中渗透', value: 6.80 },
+                            { source: '交通生活', target: '低渗透', value: 2.10 },
+                            { source: '饮食', target: '高渗透', value: 13.14 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 3.62 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 6.80 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 13.14 }
+                        ],
+                        total: 23.56
+                    },
+                    1920: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 1.45 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.49 },
+                            { source: '交通生活', target: '低渗透', value: 2.47 },
+                            { source: '饮食', target: '高渗透', value: 12.09 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 3.92 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 5.49 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 12.09 }
+                        ],
+                        total: 21.50
+                    },
+                    1930: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 1.81 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.34 },
+                            { source: '交通生活', target: '低渗透', value: 2.84 },
+                            { source: '饮食', target: '高渗透', value: 11.30 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 4.65 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 5.34 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 11.30 }
+                        ],
+                        total: 21.29
+                    },
+                    1940: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 2.22 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.25 },
+                            { source: '交通生活', target: '低渗透', value: 2.97 },
+                            { source: '饮食', target: '高渗透', value: 11.36 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 5.19 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 5.25 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 11.36 }
+                        ],
+                        total: 21.80
+                    },
+                    1950: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 1.93 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.53 },
+                            { source: '交通生活', target: '低渗透', value: 2.98 },
+                            { source: '饮食', target: '高渗透', value: 11.84 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 4.91 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 5.53 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 11.84 }
+                        ],
+                        total: 22.28
+                    },
+                    1960: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 2.36 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.43 },
+                            { source: '交通生活', target: '低渗透', value: 2.93 },
+                            { source: '饮食', target: '高渗透', value: 12.11 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 5.29 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 5.43 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 12.11 }
+                        ],
+                        total: 22.83
+                    },
+                    1970: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 2.84 },
+                            { source: '娱乐体育', target: '中渗透', value: 6.93 },
+                            { source: '交通生活', target: '低渗透', value: 3.20 },
+                            { source: '饮食', target: '高渗透', value: 10.72 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 6.04 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 6.93 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 10.72 }
+                        ],
+                        total: 23.69
+                    },
+                    1980: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 2.99 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.88 },
+                            { source: '交通生活', target: '低渗透', value: 3.06 },
+                            { source: '饮食', target: '中渗透', value: 9.50 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 6.05 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 15.38 }
+                        ],
+                        total: 21.43
+                    },
+                    1990: {
+                        categoryLinks: [
+                            { source: '拼写', target: '低渗透', value: 3.98 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.53 },
+                            { source: '交通生活', target: '低渗透', value: 4.23 },
+                            { source: '饮食', target: '高渗透', value: 10.89 }
+                        ],
+                        impactLinks: [
+                            { source: '低渗透', target: '影响有限或被保留', value: 8.21 },
+                            { source: '中渗透', target: '部分领域选择性接受', value: 5.53 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 10.89 }
+                        ],
+                        total: 24.63
+                    },
+                    2000: {
+                        categoryLinks: [
+                            { source: '拼写', target: '中渗透', value: 5.91 },
+                            { source: '娱乐体育', target: '中渗透', value: 6.31 },
+                            { source: '交通生活', target: '中渗透', value: 5.13 },
+                            { source: '饮食', target: '高渗透', value: 11.48 }
+                        ],
+                        impactLinks: [
+                            { source: '中渗透', target: '部分领域选择性接受', value: 17.35 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 11.48 }
+                        ],
+                        total: 28.83
+                    },
+                    2010: {
+                        categoryLinks: [
+                            { source: '拼写', target: '中渗透', value: 8.56 },
+                            { source: '娱乐体育', target: '中渗透', value: 6.18 },
+                            { source: '交通生活', target: '中渗透', value: 6.75 },
+                            { source: '饮食', target: '高渗透', value: 12.73 }
+                        ],
+                        impactLinks: [
+                            { source: '中渗透', target: '部分领域选择性接受', value: 21.49 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 12.73 }
+                        ],
+                        total: 34.22
+                    },
+                    2020: {
+                        categoryLinks: [
+                            { source: '拼写', target: '中渗透', value: 9.46 },
+                            { source: '娱乐体育', target: '中渗透', value: 5.81 },
+                            { source: '交通生活', target: '中渗透', value: 7.87 },
+                            { source: '饮食', target: '高渗透', value: 13.48 }
+                        ],
+                        impactLinks: [
+                            { source: '中渗透', target: '部分领域选择性接受', value: 23.14 },
+                            { source: '高渗透', target: '词汇层面广泛接受', value: 13.48 }
+                        ],
+                        total: 36.62
+                    }
+                };
+
+                const chartSankey = echarts.init(document.getElementById('chart-sankey'));
+                const slider = document.getElementById('yearSlider');
+                const yearDisplay = document.getElementById('yearDisplay');
+                const totalDisplay = document.getElementById('totalDisplay');
+
+                function updateSankey(year) {
+                    const data = YEARLY_DATA[year];
+                    if (!data) return;
+
+                    const allLinks = [...data.categoryLinks, ...data.impactLinks].filter(link => link.value && link.value > 0);
+
+                    const usedNames = new Set();
+                    allLinks.forEach(link => {
+                        usedNames.add(link.source);
+                        usedNames.add(link.target);
+                    });
+
+                    const nodes = [];
+                    LEVEL_0.forEach(name => { if (usedNames.has(name)) nodes.push({ name }); });
+                    LEVEL_1.forEach(name => { 
+                        if (usedNames.has(name)) {
+                            const color = nodeColors[name] || '#b3cde3';
+                            nodes.push({ name, itemStyle: { color: color } }); 
+                        }
+                    });
+                    LEVEL_2.forEach(name => { if (usedNames.has(name)) nodes.push({ name }); });
+
+                    if (nodes.length === 0 || allLinks.length === 0) {
+                        chartSankey.clear();
+                        chartSankey.setOption({ title: { text: `无数据 (${year}年)`, left: 'center', top: 'center' } });
+                        return;
+                    }
+
+                    const option = {
+                        title: {
+                            text: `美式英语在英国出版物中的渗透路径 (${year}年)`,
+                            subtext: `基于20组词汇的美式形式比例 ｜ 总体渗透率 ${data.total.toFixed(2)}%`,
+                            left: 'center',
+                            top: 8,
+                            textStyle: { fontSize: 18, fontWeight: 600, color: '#1a1612' },
+                            subtextStyle: { fontSize: 13, color: '#6b5f52' }
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            triggerOn: 'mousemove',
+                            formatter: function(params) {
+                                if (params.dataType === 'edge') {
+                                    return `<strong>${params.data.source}</strong> → <strong>${params.data.target}</strong><br/>流量：${params.data.value}%`;
+                                } else {
+                                    return `<strong>${params.name}</strong><br/>总流量：${params.value}%`;
+                                }
+                            },
+                            backgroundColor: 'rgba(255,255,255,0.92)',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            textStyle: { color: '#1e293b' }
+                        },
+                        series: [{
+                            type: 'sankey',
+                            layout: 'none',
+                            top: 70,
+                            bottom: 30,
+                            nodeAlign: 'justify',
+                            nodeWidth: 18,
+                            nodeGap: 12,
+                            draggable: true,
+                            data: nodes,
+                            links: allLinks,
+                            emphasis: {
+                                focus: 'adjacency'
+                            },
+                            levels: [
+                                { depth: 0, itemStyle: { color: '#8B3A3A', borderWidth: 0 }, lineStyle: { color: 'source', opacity: 0.6 } },
+                                { depth: 1, itemStyle: { color: 'inherit', borderWidth: 0 }, lineStyle: { color: 'source', opacity: 0.6 } }, // 使用节点内联颜色
+                                { depth: 2, itemStyle: { color: '#C4A96A', borderWidth: 0 }, lineStyle: { color: 'source', opacity: 0.6 } }
+                            ],
+                            lineStyle: {
+                                curveness: 0.5,
+                                color: 'gradient'
+                            },
+                            label: {
+                                fontSize: 13,
+                                fontWeight: 500,
+                                color: '#1a1612'
+                            }
+                        }]
+                    };
+                    chartSankey.setOption(option, true);
+                    yearDisplay.textContent = year;
+                    totalDisplay.textContent = data.total.toFixed(2) + '%';
+                }
+
+                slider.addEventListener('input', function() {
+                    updateSankey(parseInt(this.value));
+                });
+                updateSankey(2020);
+
+                // ---- 3.4 四类词汇折线图（四个独立图表，播放/暂停/重置 + DataZoom滑块） ----
+                const yearsFull = [1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
+                const TOTAL_STEPS = yearsFull.length;
+
+                const allWords = [
+                    'color', 'center', 'organize', 'labor', 'theater',
+                    'apartment', 'vacation', 'sidewalk', 'gasoline', 'garbage',
+                    'cookie', 'chips', 'eggplant', 'candy', 'takeout',
+                    'movie', 'soccer', 'playlist', 'bar', 'american_football'
+                ];
+
+                const usData = {
+                    color: [0.942154662125, 0.90642516, 0.94939924, 0.940902850732, 0.959252043888, 0.9625872551, 0.953169388206, 0.927012125586, 0.939188205252, 0.941419639046, 0.949154837665, 0.929520024575, 0.904129369127],
+                    center: [0.7194081, 0.778202073158, 0.881284176571, 0.897173596242, 0.936707125326, 0.935650679331, 0.940191815996, 0.931955529283, 0.941688574322, 0.934558480114, 0.936261528717, 0.912161338195, 0.887343203217],
+                    organize: [0.991429357765, 0.987510247457, 0.990143271523, 0.986223663474, 0.992319844679, 0.990794611918, 0.98821427368, 0.978477321646, 0.981029861275, 0.977760289606, 0.976662674539, 0.961452858307, 0.943325049293],
+                    labor: [0.971652185005, 0.962268910182, 0.976888804857, 0.969523000689, 0.980753674041, 0.969205553678, 0.965286370354, 0.92314981627, 0.948667307481, 0.937870678516, 0.932308818809, 0.909853549227, 0.876546393617],
+                    theater: [0.3939422, 0.41533824243, 0.42272437184, 0.378519678409, 0.355719308488, 0.376563746803, 0.382706660692, 0.440922846189, 0.546694711085, 0.645016918353, 0.699481176639, 0.711446112474, 0.714706703229],
+                    apartment: [0.139936717268, 0.137004975272, 0.171507241487, 0.235143105426, 0.192917116106, 0.204191638429, 0.206791272493, 0.281209940566, 0.287213518214, 0.336949294112, 0.345958736486, 0.426777349169, 0.463481015187],
+                    vacation: [0.57128820954, 0.622395452717, 0.596325661466, 0.594112904437, 0.634052391946, 0.637992334007, 0.62511078897, 0.591092789694, 0.580137931978, 0.546526330031, 0.530815221734, 0.512601674044, 0.485012160708],
+                    sidewalk: [0.455805767485, 0.462160754817, 0.371423900997, 0.380064203158, 0.432835060872, 0.376242880445, 0.311657393942, 0.307439602801, 0.282664244448, 0.314067288824, 0.419923616041, 0.5065891085, 0.554281684588],
+                    gasoline: [0.978845849596, 0.961226605, 0.971195946969, 0.984208245059, 0.967254034239, 0.976562845277, 0.974982938318, 0.958875435485, 0.967450485153, 0.954012299257, 0.947498078627, 0.90203641992, 0.839198668012],
+                    garbage: [0.60760365725, 0.640699271637, 0.683439162241, 0.634487541277, 0.695322827649, 0.76750257134, 0.732931439274, 0.78302471486, 0.838971609351, 0.872751402994, 0.862359688397, 0.815160711899, 0.786666961885],
+                    cookie: [0.041724963583, 0.035209184519, 0.086464539291, 0.208922313264, 0.339433014514, 0.459673754849, 0.536705479097, 0.562600153595, 0.706130501334, 0.759767457431, 0.820615917724, 0.807321857441, 0.782122975929],
+                    chips: [0.9951061224, 0.994485839241, 0.995198150672, 0.993350025863, 0.995228335758, 0.997316103406, 0.997459146822, 0.995498129789, 0.996268426456, 0.994586038652, 0.990507638285, 0.977154525138, 0.970250545294],
+                    eggplant: [0.949626543843, 0.924787033006, 0.949713704798, 0.916473919905, 0.884969650164, 0.908595302879, 0.948991324653, 0.942673420645, 0.941812200706, 0.955020160045, 0.94589311324, 0.957781855517, 0.945507815045],
+                    candy: [0.665536909129, 0.814940546892, 0.854723968553, 0.867515035764, 0.887080048652, 0.905851923527, 0.889309959552, 0.853547477367, 0.827178261984, 0.838622205959, 0.841713989447, 0.818731602421, 0.798413687814],
+                    takeout: [0.478788568432, 0.695364383828, 0.835331912243, 0.848114014494, 0.900895803168, 0.76288401919, 0.821230535072, 0.839109697731, 0.832784107462, 0.867527249737, 0.855432349825, 0.696808534937, 0.512466824176],
+                    movie: [0.007338511992, 0.005527771809, 0.124501851864, 0.153563035986, 0.150547225269, 0.128989139974, 0.123711744331, 0.117873472617, 0.123418764649, 0.168009445933, 0.246826128356, 0.313618819394, 0.687461854761],
+                    soccer: [0.005120527005, 0.03234442109, 0.069256690833, 0.065121802942, 0.060969024675, 0.040472081905, 0.036405902551, 0.039866008877, 0.050192751493, 0.068390084322, 0.098647469763, 0.176169670258, 0.281505716688],
+                    playlist: [1, 0.571428571429, 0.857142857143, 0.600890412521, 0.844401870627, 0.505502330401, 0.768726464928, 0.983859057263, 0.939110857434, 0.883280023839, 0.919935495678, 0.968639989445, 0.973000633862],
+                    bar: [0.949690337894, 0.848640390494, 0.848339309415, 0.854262677329, 0.840904058247, 0.794717804067, 0.794772941128, 0.622158938317, 0.662651777776, 0.751130866417, 0.760911604177, 0.827426308577, 0.801151868685],
+                    american_football: [0.855287065085, 0.600069220632, 0.596550807673, 0.585194731342, 0.522921167311, 0.550202840497, 0.426138939943, 0.316665179297, 0.243845556259, 0.2045849437, 0.19157411423, 0.177186562974, 0.223790048997]
+                };
+
+                const ukData = {
+                    color: [0.054137903671, 0.017956491061, 0.015692746534, 0.01361932252, 0.025113947076, 0.015045492455, 0.016459263902, 0.045785975711, 0.07033935485, 0.094363588045, 0.176711569765, 0.368310204013, 0.380687574257],
+                    center: [0.035770083155, 0.009996108921, 0.008261568517, 0.01498837144, 0.031046668015, 0.008571103791, 0.015713195898, 0.04033290252, 0.07059909464, 0.098404341259, 0.153090471521, 0.267535532609, 0.336440790606],
+                    organize: [0.232312996409, 0.24379973944, 0.2375122583, 0.293993401045, 0.3278147784, 0.341518168586, 0.402624033338, 0.403609248506, 0.356007916381, 0.434892563621, 0.540893975965, 0.628968271013, 0.636037580171],
+                    labor: [0.04285386376, 0.024775375281, 0.017545127144, 0.02915370736, 0.040643072404, 0.0126111, 0.02522015619, 0.056711560738, 0.065760884346, 0.114832285769, 0.218464043877, 0.299224841532, 0.367828342238],
+                    theater: [0.029262836796, 0.007158293536, 0.010917737536, 0.010834876473, 0.018918350909, 0.007846988782, 0.012191533592, 0.02056112554, 0.034289643257, 0.052445162426, 0.092684214417, 0.148688758186, 0.169910478655],
+                    apartment: [0.131880741613, 0.075216647482, 0.050222914601, 0.071524590649, 0.045866360026, 0.042228572375, 0.044229734428, 0.063006806681, 0.069110942764, 0.107769514019, 0.154080181103, 0.255798831085, 0.317781159699],
+                    vacation: [0.17937085965, 0.163244734859, 0.150596309627, 0.117365783771, 0.101413620691, 0.092921537799, 0.096815646006, 0.101294154394, 0.091007639766, 0.112155745915, 0.125150190731, 0.166403567902, 0.194062322761],
+                    sidewalk: [0.075118093693, 0.027166462098, 0.040887951152, 0.050611256077, 0.063089544895, 0.043589965316, 0.067046680248, 0.120926384634, 0.077196845415, 0.108509176728, 0.149990093429, 0.275855467443, 0.302543645286],
+                    gasoline: [0.254034975744, 0.061553923844, 0.131104171146, 0.210711064757, 0.179390809798, 0.213174779361, 0.182963625486, 0.146161167417, 0.169337127767, 0.229136922425, 0.252559045238, 0.31723528355, 0.377101698084],
+                    garbage: [0.113339654173, 0.093755754342, 0.120837625992, 0.117551428104, 0.203338845038, 0.203729515947, 0.195500861098, 0.208391152268, 0.205496776638, 0.288849869264, 0.343767986327, 0.333654432206, 0.381284044007],
+                    cookie: [0.080439595931, 0.006640011714, 0.00756966632, 0.011340568993, 0.016262538491, 0.019521864871, 0.023841214572, 0.049114862177, 0.091873249531, 0.169981791847, 0.33719741457, 0.402279057712, 0.427808905866],
+                    chips: [0.989778553931, 0.996597621555, 0.996860473193, 0.978064290601, 0.968478540652, 0.922078926891, 0.933160032375, 0.887595718767, 0.923991635126, 0.932825878056, 0.879493248878, 0.851724783811, 0.836079018343],
+                    eggplant: [0.385915502164, 0.015061790748, 0.084735008511, 0.254759828227, 0.297660013004, 0.305262544801, 0.213295021215, 0.325642979845, 0.528505002095, 0.367852726582, 0.420136654211, 0.337755431422, 0.248860478177],
+                    candy: [0.310696924862, 0.270928161293, 0.349566720896, 0.328806313209, 0.299223599988, 0.232003285618, 0.279476827425, 0.281716437298, 0.264845740779, 0.2861766979, 0.361177065557, 0.449422022339, 0.487619993896],
+                    takeout: [0.362502691901, 0.369047619913, 0.147619047619, 0.197278911565, 0.285714285714, 0.5, 0.399206348198, 0.251372696691, 0.148127181183, 0.15735311993, 0.137328160158, 0.179899993576, 0.193433510867],
+                    movie: [0.067284750168, 0.000472659487, 0.008640556586, 0.012294523266, 0.011348006009, 0.008199733703, 0.010572518221, 0.02605845422, 0.051068870131, 0.075330841574, 0.134703343999, 0.182416614895, 0.157606870261],
+                    soccer: [0.015407206993, 0.004303534691, 0.010518439018, 0.02172139677, 0.040295882826, 0.067963024858, 0.114335409936, 0.123536650173, 0.150048434028, 0.159113620552, 0.151638638622, 0.127671975549, 0.136484493776],
+                    playlist: [0.992911088065, 1, 1, 1, 1, 0.980938476419, 1, 0.690647320043, 0.8302870677, 0.937179748446, 0.895475984152, 0.946587355316, 0.985668310314],
+                    bar: [0.897877006533, 0.887822990407, 0.908522408603, 0.895384878517, 0.913980196139, 0.940433165567, 0.923485754623, 0.86959568847, 0.828732500329, 0.799240452716, 0.827427589831, 0.778673698494, 0.777972792012],
+                    american_football: [0.400696312646, 0.466979883978, 0.177824238418, 0.137572800092, 0.084855963027, 0.070119940883, 0.036494449994, 0.057364862864, 0.050718063917, 0.100590746079, 0.075360231839, 0.072665937766, 0.074421483076]
+                };
+
+                const colorPalette = [
+                    '#5470c6', '#fac858', '#ee6666', '#73c0de', '#3ba272',
+                    '#fc8452', '#9a60b4', '#ea7ccc', '#1e9493', '#d48265'
+                ];
+                const wordColorMap = {};
+                allWords.forEach((w, i) => wordColorMap[w] = colorPalette[i % colorPalette.length]);
+
+                const groups = [
+                    { id: 'chart1', title: '📝 拼写差异', words: ['color', 'center', 'organize', 'labor', 'theater'] },
+                    { id: 'chart2', title: '🏠 生活词汇', words: ['apartment', 'vacation', 'sidewalk', 'gasoline', 'garbage'] },
+                    { id: 'chart3', title: '🍔 饮食词汇', words: ['cookie', 'chips', 'eggplant', 'candy', 'takeout'] },
+                    { id: 'chart4', title: '🎬 娱乐 / 体育', words: ['movie', 'soccer', 'playlist', 'bar', 'american_football'] }
+                ];
+
+                const chartObjects = groups.map(group => {
+                    const dom = document.getElementById(group.id);
+                    if (!dom) return null;
+                    const chart = echarts.init(dom);
+                    chart._hoveredSeries = null;
+                    chart.on('mouseover', function(params) {
+                        if (params.componentType === 'series') {
+                            chart._hoveredSeries = params.seriesName;
+                        }
+                    });
+                    chart.on('mouseout', function() {
+                        chart._hoveredSeries = null;
+                    });
+                    return { chart, group };
+                }).filter(item => item !== null);
+
+                let currentStep = 1;
+                let timer = null;
+                let isPlaying = false;
+
+                function updateAllCharts(step) {
+                    const validStep = Math.min(Math.max(step, 1), TOTAL_STEPS);
+                    const currentYears = yearsFull.slice(0, validStep);
+                    document.getElementById('yearDisplayLine').textContent = yearsFull[validStep - 1];
+
+                    chartObjects.forEach(({ chart, group }) => {
+                        const series = [];
+                        group.words.forEach(word => {
+                            const color = wordColorMap[word];
+                            const usName = `美国-${word}`;
+                            series.push({
+                                name: usName,
+                                type: 'line',
+                                data: usData[word].slice(0, validStep),
+                                smooth: true,
+                                showSymbol: true,
+                                symbolSize: 5,
+                                lineStyle: { width: 2, color: color },
+                                itemStyle: { color: color },
+                                emphasis: { focus: 'series', lineStyle: { width: 4 } }
+                            });
+                            const ukName = `英国-${word} (虚线)`;
+                            series.push({
+                                name: ukName,
+                                type: 'line',
+                                data: ukData[word].slice(0, validStep),
+                                smooth: true,
+                                showSymbol: true,
+                                symbolSize: 5,
+                                lineStyle: { width: 2, type: 'dashed', color: color },
+                                itemStyle: { color: color },
+                                emphasis: { focus: 'series', lineStyle: { width: 4 } }
+                            });
+                        });
+
+                        const formatter = function(params) {
+                            const hovered = chart._hoveredSeries;
+                            let res = `<strong>${params[0].axisValue}</strong><br/>`;
+                            params.forEach(p => {
+                                const isHovered = (p.seriesName === hovered);
+                                const valueStr = (p.value * 100).toFixed(1) + '%';
+                                if (isHovered) {
+                                    res += `${p.marker} ${p.seriesName}: <b>${valueStr}</b><br/>`;
+                                } else {
+                                    res += `${p.marker} ${p.seriesName}: ${valueStr}<br/>`;
+                                }
+                            });
+                            return res;
+                        };
+
+                        const option = {
+                            title: { text: group.title, left: 'center', textStyle: { fontSize: 16, fontWeight: 'bold' } },
+                            tooltip: { trigger: 'axis', formatter: formatter },
+                            legend: { type: 'scroll', top: 28, left: 'center', itemWidth: 16, itemHeight: 10,
+                                textStyle: { fontSize: 11 } },
+                            grid: { left: '6%', right: '6%', bottom: '18%', top: '22%', containLabel: true },
+                            xAxis: { type: 'category', data: currentYears, boundaryGap: false, axisLabel: { rotate: 30,
+                                    fontSize: 10 } },
+                            yAxis: { type: 'value', min: 0, max: 1, scale: true, axisLabel: { formatter: (v) => (v *
+                                    100).toFixed(0) + '%' } },
+                            dataZoom: [{ type: 'slider', start: 0, end: 100, height: 12, bottom: 5 }],
+                            series: series,
+                            animationDuration: 600,
+                            animationEasing: 'cubicOut'
+                        };
+                        chart.setOption(option, true);
+                    });
+                }
+
+                function play() {
+                    if (isPlaying) return;
+                    if (currentStep >= TOTAL_STEPS) { currentStep = 1;
+                        updateAllCharts(currentStep); }
+                    isPlaying = true;
+                    document.getElementById('playBtn').textContent = '⏸ 暂停';
+                    document.getElementById('playBtn').className = 'pause';
+                    timer = setInterval(() => {
+                        if (currentStep < TOTAL_STEPS) {
+                            currentStep++;
+                            updateAllCharts(currentStep);
+                        } else {
+                            pause();
+                        }
+                    }, 800);
+                }
+
+                function pause() {
+                    if (timer) { clearInterval(timer);
+                        timer = null; }
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶ 播放';
+                    document.getElementById('playBtn').className = '';
+                }
+
+                function reset() {
+                    pause();
+                    currentStep = 1;
+                    updateAllCharts(currentStep);
+                }
+
+                document.getElementById('playBtn').addEventListener('click', () => isPlaying ? pause() : play());
+                document.getElementById('resetBtn').addEventListener('click', reset);
+                updateAllCharts(1);
+
+                // ---- 3.5 板块 4 替换：票房图表的初始化 ----
+                const championData = [
+                    { name: '美国独立', value: 39 },
+                    { name: '美英合拍', value: 5 }
+                ];
+
+                const yearsPie = [1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020];
+                const rawPieData = [
+                    [18, 2, 0, 0],
+                    [18, 1, 1, 0],
+                    [18, 1, 1, 0],
+                    [19, 1, 0, 0],
+                    [16, 1, 3, 0],
+                    [12, 4, 4, 0],
+                    [14, 3, 2, 0],
+                    [15, 3, 1, 0],
+                    [14, 3, 2, 1],
+                ];
+                const categoriesPie = ['美国独立', '美英合拍', '美国与其他国家合拍', '非美国电影'];
+
+                // 档案风格的强制颜色
+                const archiveColors = ['#3A5A7C', '#8B3A3A', '#C4A96A', '#6b5f52'];
+                const colorMapPie = {
+                    '美国独立': '#3A5A7C',
+                    '美英合拍': '#8B3A3A',
+                    '美国与其他国家合拍': '#C4A96A',
+                    '非美国电影': '#6b5f52'
+                };
+                const fallbackColorsPie = ['#3A5A7C', '#8B3A3A', '#C4A96A', '#6b5f52'];
+
+                function buildPieData(valuesArray, labels) {
+                    const result = [];
+                    labels.forEach((name, idx) => {
+                        const val = valuesArray[idx];
+                        if (val > 0) {
+                            result.push({
+                                name: name,
+                                value: val,
+                                itemStyle: {
+                                    color: colorMapPie[name] || fallbackColorsPie[idx % fallbackColorsPie.length]
+                                }
+                            });
+                        }
+                    });
+                    return result;
+                }
+
+                function renderPie(containerId, dataArray) {
+                    const container = document.getElementById(containerId);
+                    if (!container) return;
+                    const chart = echarts.init(container);
+
+                    const option = {
+                        color: archiveColors,
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: function(params) {
+                                return `<strong>${params.name}</strong><br/>数量：<strong>${params.value}</strong> 部<br/>占比：${params.percent}%`;
+                            },
+                            backgroundColor: 'rgba(255,255,255,0.92)',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            textStyle: { color: '#1e293b', fontSize: 13 },
+                            extraCssText: 'box-shadow: 0 4px 14px rgba(0,0,0,0.08); border-radius: 10px; padding: 10px 14px;'
+                        },
+                        legend: {
+                            orient: 'horizontal',
+                            left: 'center',
+                            top: 'bottom',
+                            itemWidth: 12,
+                            itemHeight: 12,
+                            borderRadius: 3,
+                            textStyle: { fontSize: 11, color: '#334155', fontWeight: 500 },
+                            data: dataArray.map(d => d.name)
+                        },
+                        series: [{
+                            type: 'pie',
+                            radius: ['42%', '70%'],
+                            center: ['50%', '48%'],
+                            avoidLabelOverlap: true,
+                            padAngle: 0.8,
+                            itemStyle: {
+                                borderRadius: 4,
+                                borderColor: '#fff',
+                                borderWidth: 1.5
+                            },
+                            label: {
+                                show: true,
+                                position: 'outer',
+                                formatter: function(params) {
+                                    if (params.percent < 4) return params.name;
+                                    return `${params.name}\n${params.value}部`;
+                                },
+                                fontSize: 11,
+                                fontWeight: 500,
+                                color: '#1e293b',
+                                lineHeight: 16,
+                                align: 'center',
+                                bleedMargin: 10
+                            },
+                            labelLine: {
+                                length: 12,
+                                length2: 10,
+                                smooth: 0.2,
+                                lineStyle: { color: '#cbd5e1', width: 1.2 }
+                            },
+                            emphasis: {
+                                scale: true,
+                                scaleSize: 6,
+                                label: { fontSize: 13, fontWeight: 'bold' }
+                            },
+                            data: dataArray,
+                            animationDuration: 600,
+                            animationEasing: 'cubicOut'
+                        }]
+                    };
+
+                    chart.setOption(option);
+                    const resizeObserver = new ResizeObserver(() => chart.resize());
+                    resizeObserver.observe(container);
+                    chart._resizeObserver = resizeObserver;
+                    return chart;
+                }
+
+                const grid = document.getElementById('chartGrid');
+
+                const champCard = document.createElement('div');
+                champCard.className = 'pie-chart-card champion-card';
+                const champLabel = document.createElement('div');
+                champLabel.className = 'year-label';
+                const totalChamp = championData.reduce((s, i) => s + i.value, 0);
+                champLabel.innerHTML = `🏆 英国本土票房冠军 <small>（1977-2020年汇总 · 共 ${totalChamp} 部）</small>`;
+                champCard.appendChild(champLabel);
+                const champContainer = document.createElement('div');
+                champContainer.className = 'pie-chart-container';
+                champContainer.id = 'champion-chart';
+                champCard.appendChild(champContainer);
+                grid.appendChild(champCard);
+                renderPie('champion-chart', championData);
+
+                yearsPie.forEach((year, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'pie-chart-card';
+                    const label = document.createElement('div');
+                    label.className = 'year-label';
+                    const yearTotal = rawPieData[idx].reduce((a, b) => a + b, 0);
+                    label.innerHTML = `${year} <small>(${yearTotal} 部)</small>`;
+                    card.appendChild(label);
+                    const container = document.createElement('div');
+                    container.className = 'pie-chart-container';
+                    container.id = `chart-${year}`;
+                    card.appendChild(container);
+                    grid.appendChild(card);
+
+                    const pieData = buildPieData(rawPieData[idx], categoriesPie);
+                    if (pieData.length === 0) {
+                        const chart = echarts.init(container);
+                        chart.setOption({
+                            title: { text: '无数据', left: 'center', top: 'center', textStyle: { fontSize: 16, color: '#b0b8c4',
+                                    fontWeight: 400 } }
+                        });
+                        const ro = new ResizeObserver(() => chart.resize());
+                        ro.observe(container);
+                        chart._resizeObserver = ro;
+                    } else {
+                        renderPie(container.id, pieData);
+                    }
+                });
+
+                // ---- 3.6 影视词汇对比图（已被新版图替换，故移除本块） ----
+
+                // 自适应
+                window.addEventListener('resize', function() {
+                    chartUKStack.resize();
+                    chartUSStack.resize();
+                    chartSankey.resize();
+                    chartObjects.forEach(({ chart }) => chart.resize());
+                    document.querySelectorAll('#chartGrid .pie-chart-container').forEach(el => {
+                        const inst = echarts.getInstanceByDom(el);
+                        if (inst) inst.resize();
+                    });
+                });
+
+                updateNavigation();
+                console.log('📜 档案内容已激活');
+            }
+
+            // ============================================================
+            // 4. 初始化：禁止滚动直到进入
+            // ============================================================
+            document.body.classList.add('no-scroll');
+
+            console.log('🔐 档案封面已就绪');
+            console.log('   档案编号：ENG-2026-DECLASSIFIED');
+            console.log('   状态：已封印 — 点击下方蜡封以解密');
+            console.log('   💡 提示：也可按 Enter 键开封');
+
+        })();
+    </script>
+</body>
+</html>
